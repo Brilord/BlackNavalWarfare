@@ -2,15 +2,17 @@ using UnityEngine;
 
 public class BulletScript : MonoBehaviour
 {
-    public float bulletLifetime = 5f;  // How long the bullet exists before being destroyed
-    public int bulletDamage = 10;      // Damage dealt by the bullet
-    public float bulletSpeed = 10f;    // Speed at which the bullet travels
+    [SerializeField]
+    private int bulletDamage = 10;      // Damage dealt by the bullet
+
+    [SerializeField]
+    private float bulletSpeed = 10f;    // Speed at which the bullet travels
 
     private Rigidbody2D rb;
 
     void Start()
     {
-        // Try to get the Rigidbody2D component attached to the bullet
+        // Try to get the Rigidbody2D component attached to the bullet instance
         rb = GetComponent<Rigidbody2D>();
 
         // Check if the Rigidbody2D component exists
@@ -21,11 +23,8 @@ public class BulletScript : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No Rigidbody2D found on the bullet!");
+            Debug.LogError("No Rigidbody2D found on the bullet instance!");
         }
-
-        // Destroy the bullet after a certain time to prevent it from existing indefinitely
-        Destroy(gameObject, bulletLifetime);
     }
 
     // This method is called when the bullet collides with another object
@@ -39,7 +38,7 @@ public class BulletScript : MonoBehaviour
             enemy.TakeDamage(bulletDamage);
         }
 
-        // Destroy the bullet after it hits something
+        // Destroy the bullet instance after it hits something
         Destroy(gameObject);
     }
 }
