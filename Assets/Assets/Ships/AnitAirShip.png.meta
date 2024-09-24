@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b2191f14373d64d4986b7217081622a1
+guid: 976363f07b19d174b8051ad56e98399b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2069719345023393980
-    second: AntiAirBoat_0
+      213: 1464748545110708891
+    second: AnitAirShip_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -165,13 +165,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AntiAirBoat_0
+      name: AnitAirShip_0
       rect:
         serializedVersion: 2
-        x: 22
+        x: 10
         y: 22
-        width: 341
-        height: 48
+        width: 343
+        height: 50
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,8 +180,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 44f5027b831e643e0800000000000000
-      internalID: -2069719345023393980
+      spriteID: b92189c8a05d35410800000000000000
+      internalID: 1464748545110708891
       vertices: []
       indices: 
       edges: []

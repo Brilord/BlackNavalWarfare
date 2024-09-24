@@ -5,9 +5,6 @@ public class BaseScript : MonoBehaviour
     // Array to hold different types of unit prefabs
     public GameObject[] unitPrefabs;
 
-    // Spawn point for the units
-    public Transform spawnPoint;
-
     // Time between spawns
     public float spawnInterval = 5.0f;
 
@@ -64,8 +61,18 @@ public class BaseScript : MonoBehaviour
     {
         if (selectedUnitIndex >= 0 && selectedUnitIndex < unitPrefabs.Length)
         {
-            // Instantiate the selected unitPrefab at the spawnPoint's position and rotation
-            Instantiate(unitPrefabs[selectedUnitIndex], spawnPoint.position, spawnPoint.rotation);
+            // Get the base position (the object's position)
+            Vector3 spawnPosition = transform.position;
+
+            // If the selected unit is a "ship" type (assuming index 0 is for the ship)
+            if (selectedUnitIndex == 0) // Assuming the first unit is the ship
+            {
+                // Set the y-position to -3.3 for the ship
+                spawnPosition.y = -3.4f;
+            }
+
+            // Instantiate the selected unitPrefab at the modified spawn position and default rotation
+            Instantiate(unitPrefabs[selectedUnitIndex], spawnPosition, transform.rotation);
         }
         else
         {

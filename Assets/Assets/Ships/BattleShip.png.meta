@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: fcf5b85c5bda1964abf7aac0872d6852
+guid: 4d704c6fa62561f4ab16403e57c53dfc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7151472315499090587
-    second: GunBoat (2)_0
+      213: -5128433789231390119
+    second: BattleShip_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -165,13 +165,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GunBoat (2)_0
+      name: BattleShip_0
       rect:
         serializedVersion: 2
-        x: 23
-        y: 18
-        width: 294
-        height: 52
+        x: 51
+        y: 34
+        width: 1037
+        height: 187
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,8 +180,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b921d5a4e222f3360800000000000000
-      internalID: 7151472315499090587
+      spriteID: 952a0cae3a424d8b0800000000000000
+      internalID: -5128433789231390119
       vertices: []
       indices: 
       edges: []
@@ -199,8 +199,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      GunBoat (2)_0: 7151472315499090587
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

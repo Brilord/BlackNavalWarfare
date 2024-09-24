@@ -9,6 +9,9 @@ public class GunboatScript : MonoBehaviour
     private float fireTimer = 0f;    // Timer for firing bullets
     public float bulletSpeed = 10f;  // Speed of the bullet
 
+    public float moveSpeed = 1f;     // Speed for moving left and right
+    private bool movingRight = true; // Direction of movement
+
     void Start()
     {
         // Initialize any starting logic
@@ -29,6 +32,32 @@ public class GunboatScript : MonoBehaviour
         if (health <= 0)
         {
             Destroy(gameObject);  // Destroy the gunboat if health is 0
+        }
+
+        // Move the gunboat left and right
+        Move();
+    }
+
+    void Move()
+    {
+        // Move the gunboat in the current direction
+        if (movingRight)
+        {
+            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
+        }
+
+        // Switch direction after reaching a certain boundary (e.g., screen width)
+        if (transform.position.x >= 10f) // Adjust the boundary values as needed
+        {
+            movingRight = false;
+        }
+        else if (transform.position.x <= -10f) // Adjust the boundary values as needed
+        {
+            movingRight = true;
         }
     }
 
