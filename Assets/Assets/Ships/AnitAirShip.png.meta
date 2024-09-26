@@ -199,7 +199,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      AnitAirShip_0: 1464748545110708891
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
