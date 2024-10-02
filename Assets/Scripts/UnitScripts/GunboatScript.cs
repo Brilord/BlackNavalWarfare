@@ -12,9 +12,12 @@ public class GunboatScript : MonoBehaviour
     public float moveSpeed = 1f;     // Speed for moving left and right
     private bool movingRight = true; // Direction of movement
 
+    private Vector3 originalScale;   // Store the original scale of the object
+
     void Start()
     {
-        // Initialize any starting logic
+        // Store the initial scale of the object
+        originalScale = transform.localScale;
     }
 
     void Update()
@@ -51,14 +54,24 @@ public class GunboatScript : MonoBehaviour
         }
 
         // Switch direction after reaching a certain boundary (e.g., screen width)
-        if (transform.position.x >= 10f) // Adjust the boundary values as needed
+        if (transform.position.x >= 10f && movingRight) // Adjust the boundary values as needed
         {
             movingRight = false;
+            Flip(); // Flip the gunboat to face the opposite direction
         }
-        else if (transform.position.x <= -10f) // Adjust the boundary values as needed
+        else if (transform.position.x <= -10f && !movingRight) // Adjust the boundary values as needed
         {
             movingRight = true;
+            Flip(); // Flip the gunboat to face the opposite direction
         }
+    }
+
+    void Flip()
+    {
+        // Flip the gunboat by changing its scale on the X axis
+        Vector3 newScale = originalScale;
+        newScale.x *= -1; // Invert the X scale to flip the sprite
+        transform.localScale = newScale;
     }
 
     void Shoot()
