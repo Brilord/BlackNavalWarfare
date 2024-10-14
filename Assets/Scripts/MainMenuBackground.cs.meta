@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 1c01c37643958f546a4116a5de5c9a7a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - backgroundMusic: {fileID: 8300000, guid: 013103d2a6a806b4f98e4d7b716877ec, type: 3}
+  - playButton: {instanceID: 0}
+  - optionsButton: {instanceID: 0}
+  - quitButton: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

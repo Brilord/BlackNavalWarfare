@@ -9,8 +9,8 @@ public class ControlPanelScript : MonoBehaviour
     // Reference to the SmallAntiAirShipButton
     public Button smallAntiAirShipButton;
 
-    // Reference to the BaseScript
-    public BaseScript baseScript; // Attach your BaseScript component here
+    // Reference to the BaseScript (attach your BaseScript component here)
+    public BaseScript baseScript;
 
     // Start is called before the first frame update
     void Start()
@@ -27,10 +27,26 @@ public class ControlPanelScript : MonoBehaviour
         }
     }
 
-    // This method is called when LightGunboatButton is clicked
+    // Update is called once per frame to detect key presses
+    void Update()
+    {
+        // Check if the '1' key is pressed to spawn Light Gunboat
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            OnLightGunboatButtonClick();
+        }
+
+        // Check if the '2' key is pressed to spawn Small Anti-Air Ship
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            OnSmallAntiAirShipButtonClick();
+        }
+    }
+
+    // This method is called when LightGunboatButton is clicked or '1' key is pressed
     void OnLightGunboatButtonClick()
     {
-        Debug.Log("Light Gunboat Button was clicked");
+        Debug.Log("Light Gunboat triggered");
 
         // Trigger the spawn of the light gunboat through the BaseScript
         if (baseScript != null)
@@ -39,10 +55,10 @@ public class ControlPanelScript : MonoBehaviour
         }
     }
 
-    // This method is called when SmallAntiAirShipButton is clicked
+    // This method is called when SmallAntiAirShipButton is clicked or '2' key is pressed
     void OnSmallAntiAirShipButtonClick()
     {
-        Debug.Log("Small Anti-Air Ship Button was clicked");
+        Debug.Log("Small Anti-Air Ship triggered");
 
         // Trigger the spawn of the small anti-air ship through the BaseScript
         if (baseScript != null)
