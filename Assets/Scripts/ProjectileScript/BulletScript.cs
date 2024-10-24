@@ -41,4 +41,10 @@ public class BulletScript : MonoBehaviour
         // Destroy the bullet instance after it hits something
         Destroy(gameObject);
     }
+
+    // Public method to get the bullet's damage value
+    public int GetBulletDamage()
+    {
+        return bulletDamage;
+    }
 }
