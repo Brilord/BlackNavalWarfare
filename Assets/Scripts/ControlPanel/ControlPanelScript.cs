@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ControlPanelScript : MonoBehaviour
 {
@@ -8,6 +9,15 @@ public class ControlPanelScript : MonoBehaviour
 
     // Reference to the SmallAntiAirShipButton
     public Button smallAntiAirShipButton;
+
+    // // Reference to the OptionButton
+    // public Button optionButton;
+
+    // Reference to the QuitButton
+    public Button quitButton;
+
+    // Reference to the OptionsPanel (another UI panel for settings/options)
+    // public GameObject optionsPanel;
 
     // Reference to the BaseScript (attach your BaseScript component here)
     public BaseScript baseScript;
@@ -25,6 +35,22 @@ public class ControlPanelScript : MonoBehaviour
         {
             smallAntiAirShipButton.onClick.AddListener(OnSmallAntiAirShipButtonClick);
         }
+
+        // if (optionButton != null)
+        // {
+        //     optionButton.onClick.AddListener(OnOptionButtonClick);
+        // }
+
+        if (quitButton != null)
+        {
+            quitButton.onClick.AddListener(OnQuitButtonClick);
+        }
+
+        // // Ensure the options panel is hidden initially
+        // if (optionsPanel != null)
+        // {
+        //     optionsPanel.SetActive(false);
+        // }
     }
 
     // Update is called once per frame to detect key presses
@@ -65,5 +91,26 @@ public class ControlPanelScript : MonoBehaviour
         {
             baseScript.SpawnSpecificUnit(1); // Assuming 1 is the index for the small anti-air ship
         }
+    }
+
+    // This method is called when OptionButton is clicked
+    // void OnOptionButtonClick()
+    // {
+    //     Debug.Log("Option button clicked");
+
+    //     // Toggle the visibility of the options panel
+    //     if (optionsPanel != null)
+    //     {
+    //         optionsPanel.SetActive(!optionsPanel.activeSelf);
+    //     }
+    // }
+
+    // This method is called when QuitButton is clicked
+    void OnQuitButtonClick()
+    {
+        Debug.Log("Quit button clicked");
+
+        // Navigate to the stage selector scene
+        SceneManager.LoadScene("StageSelector"); // Replace with your actual scene name
     }
 }
