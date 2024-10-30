@@ -11,25 +11,34 @@ public class CameraScript : MonoBehaviour
     private float topBoundary;    // Top limit of movement
     private float camHalfHeight;  // Half the height of the camera
     private float camHalfWidth;   // Half the width of the camera
+    public float initialX = -13.63f; // Initial X position of the camera
+public float initialY = -2.03f; // Initial Y position of the camera
+
 
     // Start is called before the first frame update
     void Start()
-    {
-        // Calculate half of the camera's height and width
-        Camera cam = Camera.main;
-        camHalfHeight = cam.orthographicSize;
-        camHalfWidth = camHalfHeight * cam.aspect;
+{
+    // Calculate half of the camera's height and width
+    Camera cam = Camera.main;
+    camHalfHeight = cam.orthographicSize;
+    camHalfWidth = camHalfHeight * cam.aspect;
 
-        // Get the background bounds
-        SpriteRenderer backgroundRenderer = backgroundTransform.GetComponent<SpriteRenderer>();
-        Bounds backgroundBounds = backgroundRenderer.bounds;
+    // Get the background bounds
+    SpriteRenderer backgroundRenderer = backgroundTransform.GetComponent<SpriteRenderer>();
+    Bounds backgroundBounds = backgroundRenderer.bounds;
 
-        // Set the boundaries based on background size
-        leftBoundary = backgroundBounds.min.x + camHalfWidth;
-        rightBoundary = backgroundBounds.max.x - camHalfWidth;
-        bottomBoundary = backgroundBounds.min.y + camHalfHeight;
-        topBoundary = backgroundBounds.max.y - camHalfHeight;
-    }
+    // Set the boundaries based on background size
+    leftBoundary = backgroundBounds.min.x + camHalfWidth;
+    rightBoundary = backgroundBounds.max.x - camHalfWidth;
+    bottomBoundary = backgroundBounds.min.y + camHalfHeight;
+    topBoundary = backgroundBounds.max.y - camHalfHeight;
+
+    // Set initial position and clamp it within boundaries
+    float clampedX = Mathf.Clamp(initialX, leftBoundary, rightBoundary);
+    float clampedY = Mathf.Clamp(initialY, bottomBoundary, topBoundary);
+    transform.position = new Vector3(clampedX, clampedY, transform.position.z);
+}
+
 
     // Update is called once per frame
     void Update()
