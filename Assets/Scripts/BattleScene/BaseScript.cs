@@ -1,46 +1,39 @@
 using UnityEngine;
 using TMPro;
+using System;
 using System.Collections;
 
 public class BaseScript : MonoBehaviour
 {
-    // Array to hold different types of unit prefabs
     public GameObject[] unitPrefabs;
-
-    // Default health of the base
     public int baseHealth = 16000;
+    public int maxHealth = 16000; // Set max health for display purposes
+    public int resources = 100;
+    public int maxResourceCapacity = 800;
+    public int resourceGenerationRate = 20;
+    public TextMeshProUGUI resourceText;
 
-    // Resource quantity and capacity
-    public int resources = 100;  // Starting resource quantity
-    public int maxResourceCapacity = 800;  // Max storage capacity for resources
-    public int resourceGenerationRate = 20;  // Resources generated per second
-    public TextMeshProUGUI resourceText;  // Text component for resource display
+    // Define events to notify listeners when resources or health change
+    public event Action OnResourceChanged;
+    public event Action OnHealthChanged;
 
     private void Start()
     {
-        UpdateResourceText();  // Initialize the resource display at the start
-        StartCoroutine(GenerateResources());  // Start resource generation coroutine
+        UpdateResourceText();
+        StartCoroutine(GenerateResources());
     }
 
-    // Coroutine to generate resources
     private IEnumerator GenerateResources()
     {
         while (true)
         {
-            yield return new WaitForSeconds(1);  // Wait for 1 second
+            yield return new WaitForSeconds(1);
 
             if (resources < maxResourceCapacity)
             {
-                resources += resourceGenerationRate;
-
-                // Ensure we do not exceed max capacity
-                if (resources > maxResourceCapacity)
-                {
-                    resources = maxResourceCapacity;
-                }
-
+                resources = Mathf.Min(resources + resourceGenerationRate, maxResourceCapacity);
                 Debug.Log("Added " + resourceGenerationRate + " resources. Current resources: " + resources);
-                UpdateResourceText();
+                TriggerResourceChanged();
             }
             else
             {
@@ -48,92 +41,70 @@ public class BaseScript : MonoBehaviour
             }
         }
     }
-
-    
-
-   // Function to check if there are enough resources for an upgrade or purchase
-public bool CanAfford(int cost)
+    private void UpdateResourceText()
 {
-    return resources >= cost;
-}
-
-// Updated function to apply resource storage upgrade with cost
-public void UpgradeResourceStorage(int additionalCapacity, int upgradeCost)
-{
-    if (resources >= upgradeCost)
+    if (resourceText != null)
     {
-        resources -= upgradeCost;  // Deduct resources
-        maxResourceCapacity += additionalCapacity;
-        Debug.Log("Resource storage upgraded! New capacity: " + maxResourceCapacity);
-        UpdateResourceText();
-    }
-    else
-    {
-        Debug.LogWarning("Not enough resources to upgrade storage.");
+        resourceText.text = $"Resources: {resources}/{maxResourceCapacity}";
     }
 }
 
-// Updated function to apply resource generation rate upgrade with cost
-public void UpgradeResourceGeneration(int additionalRate, int upgradeCost)
-{
-    if (resources >= upgradeCost)
-    {
-        resources -= upgradeCost;  // Deduct resources
-        resourceGenerationRate += additionalRate;
-        Debug.Log("Resource generation rate upgraded! New rate: " + resourceGenerationRate + " per second.");
-        UpdateResourceText();
-    }
-    else
-    {
-        Debug.LogWarning("Not enough resources to upgrade generation rate.");
-    }
-}
 
-    // Function to spawn a specific unit when the button is pressed
+    public bool CanAfford(int cost)
+    {
+        return resources >= cost;
+    }
+
+    public void UpgradeResourceStorage(int additionalCapacity, int upgradeCost)
+    {
+        if (CanAfford(upgradeCost))
+        {
+            resources -= upgradeCost;
+            maxResourceCapacity += additionalCapacity;
+            Debug.Log("Resource storage upgraded! New capacity: " + maxResourceCapacity);
+            TriggerResourceChanged();
+        }
+        else
+        {
+            Debug.LogWarning("Not enough resources to upgrade storage.");
+        }
+    }
+
+    public void UpgradeResourceGeneration(int additionalRate, int upgradeCost)
+    {
+        if (CanAfford(upgradeCost))
+        {
+            resources -= upgradeCost;
+            resourceGenerationRate += additionalRate;
+            Debug.Log("Resource generation rate upgraded! New rate: " + resourceGenerationRate + " per second.");
+            TriggerResourceChanged();
+        }
+        else
+        {
+            Debug.LogWarning("Not enough resources to upgrade generation rate.");
+        }
+    }
+
     public void SpawnSpecificUnit(int unitIndex)
     {
         if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
         {
-            // Set default cost for units
-            int unitCost = 10;  // Default cost for units
-            
-            // Set specific costs based on unit type
-            if (unitIndex == 0)  // Light gunboat
-            {
-                unitCost = 60;
-            }
-            else if (unitIndex == 1)  // Small Anti-Air Ship
-            {
-                unitCost = 80;
-            }
+            int unitCost = GetUnitCost(unitIndex);
 
-            // Check if there are enough resources to spawn the selected unit
-            if (resources >= unitCost)
+            if (CanAfford(unitCost))
             {
-                resources -= unitCost;  // Deduct resources based on unit cost
-                UpdateResourceText();  // Update resource display
+                resources -= unitCost;
+                TriggerResourceChanged();
 
-                // Get the base position (the object's position)
                 Vector3 spawnPosition = transform.position;
+                spawnPosition.y = -3.4f;
+                Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
 
-                // Adjust spawn position based on unit type
-                if (unitIndex == 0)  // Light gunboat
-                {
-                    spawnPosition.y = -3.4f;
-                    Debug.Log("Light Gunboat spawned. Cost: " + unitCost + " resources. Remaining: " + resources);
-                }
-                else if (unitIndex == 1)  // Small Anti-Air Ship
-                {
-                    spawnPosition.y = -3.4f;
-                    Debug.Log("Small Anti-Air Ship spawned. Cost: " + unitCost + " resources. Remaining: " + resources);
-                }
-
-                // Instantiate the selected unitPrefab at the modified spawn position and default rotation
                 Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
             }
             else
             {
-                Debug.LogWarning("Not enough resources to spawn this unit. Required: " + unitCost + ", Available: " + resources);
+                Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
             }
         }
         else
@@ -142,24 +113,24 @@ public void UpgradeResourceGeneration(int additionalRate, int upgradeCost)
         }
     }
 
-    // Function to add resources with capacity check
-    public void AddResources(int amount)
+    private int GetUnitCost(int unitIndex)
     {
-        if (resources + amount <= maxResourceCapacity)
+        return unitIndex switch
         {
-            resources += amount;
-            UpdateResourceText();
-            Debug.Log(amount + " resources added. Total: " + resources);
-        }
-        else
-        {
-            resources = maxResourceCapacity;
-            UpdateResourceText();
-            Debug.Log("Resources reached maximum capacity of " + maxResourceCapacity);
-        }
+            0 => 60,
+            1 => 80,
+            2 => 400,
+            _ => 10
+        };
     }
 
-    // Function to deal damage to the base
+    public void AddResources(int amount)
+    {
+        resources = Mathf.Min(resources + amount, maxResourceCapacity);
+        TriggerResourceChanged();
+        Debug.Log($"{amount} resources added. Total: {resources}");
+    }
+
     public void TakeDamage(int damage)
     {
         baseHealth -= damage;
@@ -170,22 +141,25 @@ public void UpgradeResourceGeneration(int additionalRate, int upgradeCost)
         else
         {
             Debug.Log("Base health: " + baseHealth);
+            TriggerHealthChanged(); // Trigger health update when damaged
         }
     }
 
-    // Function to handle base destruction
     private void BaseDestroyed()
     {
         Debug.Log("Base destroyed!");
-        // Implement logic for base destruction (e.g., game over, play destruction animation, etc.)
     }
 
-    // Function to update resource text
-    private void UpdateResourceText()
+    private void TriggerResourceChanged()
     {
-        if (resourceText != null)
-        {
-            resourceText.text = "Resources: " + resources + "/" + maxResourceCapacity;
-        }
+        // Invoke the event to notify listeners of the resource change
+        OnResourceChanged?.Invoke();
+        UpdateResourceText();
+    }
+
+    private void TriggerHealthChanged()
+    {
+        // Invoke the event to notify listeners of the health change
+        OnHealthChanged?.Invoke();
     }
 }

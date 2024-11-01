@@ -1,31 +1,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class ControlPanelScript : MonoBehaviour
 {
-    // Reference to the LightGunboatButton
     public Button lightGunboatButton;
-
-    // Reference to the SmallAntiAirShipButton
     public Button smallAntiAirShipButton;
-
-    // Reference to the QuitButton
     public Button quitButton;
-
-    // Reference to the ResourceStorageUpgradeButton
     public Button resourceStorageUpgradeButton;
-
-    // Reference to the ResourceGenerationIncreaseButton
     public Button resourceGenerationIncreaseButton;
-
-    // Reference to the BaseScript (attach your BaseScript component here)
     public BaseScript baseScript;
+    public BaseScript enemyBaseScript;
+    public TextMeshProUGUI resourceText;
+    public TextMeshProUGUI baseHealthText;
+    public TextMeshProUGUI enemyBaseHealthText;
 
-    // Start is called before the first frame update
     void Start()
     {
-        // Assign listeners to the buttons
         if (lightGunboatButton != null)
         {
             lightGunboatButton.onClick.AddListener(OnLightGunboatButtonClick);
@@ -50,87 +42,114 @@ public class ControlPanelScript : MonoBehaviour
         {
             resourceGenerationIncreaseButton.onClick.AddListener(OnResourceGenerationIncreaseButtonClick);
         }
+
+        // Subscribe to the resource and health changed events
+        if (baseScript != null)
+        {
+            baseScript.OnResourceChanged += UpdateResourceText;
+            baseScript.OnHealthChanged += UpdateBaseHealthText;
+        }
+
+        if (enemyBaseScript != null)
+        {
+            enemyBaseScript.OnHealthChanged += UpdateEnemyBaseHealthText;
+        }
+
+        // Initialize the resource and health text displays
+        UpdateResourceText();
+        UpdateBaseHealthText();
+        UpdateEnemyBaseHealthText();
     }
 
-    // Update is called once per frame to detect key presses
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        // Check for key presses for unit spawning
+        if (Input.GetKeyDown(KeyCode.Alpha1)) // Press "1" key
         {
             OnLightGunboatButtonClick();
         }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2)) // Press "2" key
         {
             OnSmallAntiAirShipButtonClick();
         }
-        
-        // Additional keyboard shortcuts (optional)
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+    }
+
+    // Ensure to unsubscribe from the event when the object is destroyed
+    void OnDestroy()
+    {
+        if (baseScript != null)
         {
-            OnResourceStorageUpgradeButtonClick();
+            baseScript.OnResourceChanged -= UpdateResourceText;
+            baseScript.OnHealthChanged -= UpdateBaseHealthText;
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha4))
+        if (enemyBaseScript != null)
         {
-            OnResourceGenerationIncreaseButtonClick();
+            enemyBaseScript.OnHealthChanged -= UpdateEnemyBaseHealthText;
+        }
+    }
+
+    public void UpdateResourceText()
+    {
+        if (resourceText != null && baseScript != null)
+        {
+            resourceText.text = "Resource: " + baseScript.resources + " / " + baseScript.maxResourceCapacity;
+        }
+    }
+
+    public void UpdateBaseHealthText()
+    {
+        if (baseHealthText != null && baseScript != null)
+        {
+            baseHealthText.text = "Base Health: " + baseScript.baseHealth + " / " + baseScript.maxHealth;
+        }
+    }
+
+    public void UpdateEnemyBaseHealthText()
+    {
+        if (enemyBaseHealthText != null && enemyBaseScript != null)
+        {
+            enemyBaseHealthText.text = "Enemy Base Health: " + enemyBaseScript.baseHealth + " / " + enemyBaseScript.maxHealth;
         }
     }
 
     void OnLightGunboatButtonClick()
     {
-        Debug.Log("Light Gunboat triggered");
-
         if (baseScript != null)
         {
-            baseScript.SpawnSpecificUnit(0); // Assuming 0 is the index for the light gunboat
+            baseScript.SpawnSpecificUnit(0);
         }
     }
 
     void OnSmallAntiAirShipButtonClick()
     {
-        Debug.Log("Small Anti-Air Ship triggered");
-
         if (baseScript != null)
         {
-            baseScript.SpawnSpecificUnit(1); // Assuming 1 is the index for the small anti-air ship
+            baseScript.SpawnSpecificUnit(1);
         }
     }
 
-void OnResourceStorageUpgradeButtonClick()
-{
-    Debug.Log("Resource Storage Upgrade triggered");
-    int upgradeCost = 50;  // Define the cost for upgrading storage
-    if (baseScript != null && baseScript.CanAfford(upgradeCost))
+    void OnResourceStorageUpgradeButtonClick()
     {
-        baseScript.UpgradeResourceStorage(200, upgradeCost); // Upgrade by 200 units with a cost
+        int upgradeCost = 50;
+        if (baseScript != null && baseScript.CanAfford(upgradeCost))
+        {
+            baseScript.UpgradeResourceStorage(200, upgradeCost);
+        }
     }
-    else
+
+    void OnResourceGenerationIncreaseButtonClick()
     {
-        Debug.LogWarning("Not enough resources for storage upgrade.");
+        int upgradeCost = 30;
+        if (baseScript != null && baseScript.CanAfford(upgradeCost))
+        {
+            baseScript.UpgradeResourceGeneration(5, upgradeCost);
+        }
     }
-}
 
-void OnResourceGenerationIncreaseButtonClick()
-{
-    Debug.Log("Resource Generation Increase triggered");
-    int upgradeCost = 30;  // Define the cost for upgrading generation rate
-    if (baseScript != null && baseScript.CanAfford(upgradeCost))
-    {
-        baseScript.UpgradeResourceGeneration(5, upgradeCost); // Increase by 5 units per second with a cost
-    }
-    else
-    {
-        Debug.LogWarning("Not enough resources for generation rate upgrade.");
-    }
-}
-
-
-
-    // This method is called when QuitButton is clicked
     void OnQuitButtonClick()
     {
-        Debug.Log("Quit button clicked");
-        SceneManager.LoadScene("StageSelector"); // Replace with your actual scene name
+        SceneManager.LoadScene("StageSelector");
     }
 }

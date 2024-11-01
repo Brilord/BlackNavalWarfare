@@ -32,11 +32,17 @@ public class EnemyBaseScript : MonoBehaviour
         {
             Debug.LogError("Health Text UI not assigned. Please assign it in the Inspector.");
         }
+
+        // Debug initial health status
+        Debug.Log("Starting Health: " + baseHP + "/" + maxHP);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Debug the base's health each frame
+        Debug.Log("Current Health in Update: " + baseHP + "/" + maxHP);
+
         if (baseHP <= 0)
         {
             DestroyBase();
@@ -47,7 +53,9 @@ public class EnemyBaseScript : MonoBehaviour
     public void ApplyDamage(float damageAmount)
     {
         baseHP -= damageAmount;
-        Debug.Log("Damage Applied: " + damageAmount + ". Current Base HP: " + baseHP + "/" + maxHP);
+        
+        // Debug statement for damage applied
+        Debug.Log("Damage Applied: " + damageAmount + ". Updated Base HP: " + baseHP + "/" + maxHP);
 
         // Update the health text
         UpdateHealthText();
@@ -68,26 +76,24 @@ public class EnemyBaseScript : MonoBehaviour
 
     // Detect trigger events with the bullet
     private void OnTriggerEnter2D(Collider2D collision)
+{
+    // Attempt to get the BulletScript component directly from the colliding object
+    BulletScript bullet = collision.GetComponent<BulletScript>();
+    
+    // Check if the BulletScript component is found (meaning the object is a bullet)
+    if (bullet != null)
     {
-        // Check if the colliding object is tagged as "Bullet"
-        if (collision.gameObject.CompareTag("Bullet"))
-        {
-            // Try to get the BulletScript component from the colliding object
-            BulletScript bullet = collision.GetComponent<BulletScript>();
-            if (bullet != null)
-            {
-                // Apply damage to the enemy base from the bullet
-                ApplyDamage(bullet.GetBulletDamage());
+        // Debug statement for bullet collision
+        Debug.Log("Bullet hit detected. Applying Bullet Damage: " + bullet.GetBulletDamage());
 
-                // Destroy the bullet after applying damage
-                Destroy(collision.gameObject);
-            }
-            else
-            {
-                Debug.LogWarning("BulletScript component not found on the colliding object.");
-            }
-        }
+        // Apply damage to the enemy base from the bullet
+        ApplyDamage(bullet.GetBulletDamage());
+
+        // Destroy the bullet after applying damage
+        Destroy(collision.gameObject);
     }
+}
+
 
     // Update the health text on the screen
     private void UpdateHealthText()
@@ -96,7 +102,9 @@ public class EnemyBaseScript : MonoBehaviour
         {
             // Display health as "Current HP / Max HP"
             healthText.text = baseHP.ToString("F0") + "/" + maxHP.ToString("F0");
-            Debug.Log("Health Text Updated: " + healthText.text);
+            
+            // Debug the health text update
+            Debug.Log("Health Text Updated to: " + healthText.text);
         }
         else
         {
