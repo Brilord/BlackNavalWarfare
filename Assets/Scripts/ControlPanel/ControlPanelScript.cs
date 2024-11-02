@@ -73,6 +73,16 @@ public class ControlPanelScript : MonoBehaviour
         {
             OnSmallAntiAirShipButtonClick();
         }
+        // Key bindings for upgrades
+        if (Input.GetKeyDown(KeyCode.K)) // Press "K" key for resource generation increase
+        {
+            OnResourceGenerationIncreaseButtonClick();
+        }
+
+        if (Input.GetKeyDown(KeyCode.L)) // Press "L" key for resource storage upgrade
+        {
+            OnResourceStorageUpgradeButtonClick();
+        }
     }
 
     // Ensure to unsubscribe from the event when the object is destroyed

@@ -1,17 +1,29 @@
 using UnityEngine;
-using UnityEngine.UI;  // Required to work with UI elements
+using TMPro;
+using UnityEngine.UI;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class EnemyBaseScript : MonoBehaviour
 {
     // Base HP
     public float baseHP = 20000f;
-    public float maxHP = 20000f; // Store max HP for reference
+    public float maxHP = 20000f;
+    
+    // Health regeneration variables
+    public float healthRegenRate = 5f; // Amount of health regenerated per second
+    public float regenInterval = 1f; // Time interval (in seconds) for regeneration
 
     // Reference to the BoxCollider2D component
     private BoxCollider2D baseCollider;
 
     // Reference to the UI Text element to display health
-    public Text healthText;
+    public TextMeshProUGUI healthText;
+
+    // Reference to the popup panel that will display the destruction message
+    public GameObject destructionPopup;
+    public GameObject retryButton;
+    public GameObject quitButton;
 
     // Start is called before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -24,7 +36,7 @@ public class EnemyBaseScript : MonoBehaviour
         {
             Debug.Log("Collider2D not found, adding BoxCollider2D to the enemy base.");
             baseCollider = gameObject.AddComponent<BoxCollider2D>();
-            baseCollider.isTrigger = true;  // Ensure it is set as a trigger
+            baseCollider.isTrigger = true;
         }
 
         // Ensure the healthText is assigned in the Inspector
@@ -33,15 +45,53 @@ public class EnemyBaseScript : MonoBehaviour
             Debug.LogError("Health Text UI not assigned. Please assign it in the Inspector.");
         }
 
-        // Debug initial health status
-        Debug.Log("Starting Health: " + baseHP + "/" + maxHP);
+        // Ensure the destructionPopup is assigned in the Inspector
+        if (destructionPopup == null)
+        {
+            Debug.LogError("Destruction Popup UI not assigned. Please assign it in the Inspector.");
+        }
+        else
+        {
+            destructionPopup.SetActive(false); // Hide it initially
+        }
+        if (retryButton != null)
+        {
+            retryButton.GetComponent<Button>().onClick.AddListener(RestartGame);
+        }
+
+        if (quitButton != null)
+        {
+            quitButton.GetComponent<Button>().onClick.AddListener(QuitToMainMenu);
+        }
+
+        // Start the health regeneration coroutine
+        StartCoroutine(RegenerateHealth());
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Debug the base's health each frame
-        Debug.Log("Current Health in Update: " + baseHP + "/" + maxHP);
+        if (baseHP <= 0)
+        {
+            DestroyBase();
+        }
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("BattleField"); // Reloads the current scene
+    }
+
+    // Method to quit to the main menu (Quit)
+    public void QuitToMainMenu()
+    {
+        SceneManager.LoadScene("StageSelector"); // Replace "MainMenu" with the name of your main menu scene
+    }
+
+    // Method to apply damage to the base
+    public void ApplyDamage(float damageAmount)
+    {
+        baseHP -= damageAmount;
+        UpdateHealthText();
 
         if (baseHP <= 0)
         {
@@ -49,21 +99,15 @@ public class EnemyBaseScript : MonoBehaviour
         }
     }
 
-    // Method to apply damage to the base
-    public void ApplyDamage(float damageAmount)
+    // Coroutine to regenerate health over time
+    private IEnumerator RegenerateHealth()
     {
-        baseHP -= damageAmount;
-        
-        // Debug statement for damage applied
-        Debug.Log("Damage Applied: " + damageAmount + ". Updated Base HP: " + baseHP + "/" + maxHP);
-
-        // Update the health text
-        UpdateHealthText();
-
-        // If health is zero or below, destroy the base
-        if (baseHP <= 0)
+        while (baseHP > 0 && baseHP < maxHP)
         {
-            DestroyBase();
+            yield return new WaitForSeconds(regenInterval);
+            baseHP = Mathf.Min(baseHP + healthRegenRate, maxHP); // Regenerate health up to maxHP
+            UpdateHealthText();
+            Debug.Log("Health regenerated. Current HP: " + baseHP);
         }
     }
 
@@ -71,44 +115,34 @@ public class EnemyBaseScript : MonoBehaviour
     private void DestroyBase()
     {
         Debug.Log("Base destroyed! Final HP: " + baseHP + "/" + maxHP);
-        Destroy(gameObject);  // Destroy the base GameObject
+        
+        // Show the destruction popup
+        if (destructionPopup != null)
+        {
+            destructionPopup.SetActive(true); // Make the popup visible
+        }
+        
+        Destroy(gameObject); // Destroy the base GameObject
     }
 
     // Detect trigger events with the bullet
     private void OnTriggerEnter2D(Collider2D collision)
-{
-    // Attempt to get the BulletScript component directly from the colliding object
-    BulletScript bullet = collision.GetComponent<BulletScript>();
-    
-    // Check if the BulletScript component is found (meaning the object is a bullet)
-    if (bullet != null)
     {
-        // Debug statement for bullet collision
-        Debug.Log("Bullet hit detected. Applying Bullet Damage: " + bullet.GetBulletDamage());
-
-        // Apply damage to the enemy base from the bullet
-        ApplyDamage(bullet.GetBulletDamage());
-
-        // Destroy the bullet after applying damage
-        Destroy(collision.gameObject);
+        BulletScript bullet = collision.GetComponent<BulletScript>();
+        
+        if (bullet != null)
+        {
+            ApplyDamage(bullet.GetBulletDamage());
+            Destroy(collision.gameObject);
+        }
     }
-}
-
 
     // Update the health text on the screen
     private void UpdateHealthText()
     {
         if (healthText != null)
         {
-            // Display health as "Current HP / Max HP"
             healthText.text = baseHP.ToString("F0") + "/" + maxHP.ToString("F0");
-            
-            // Debug the health text update
-            Debug.Log("Health Text Updated to: " + healthText.text);
-        }
-        else
-        {
-            Debug.LogWarning("Health Text UI is missing!");
         }
     }
 }
