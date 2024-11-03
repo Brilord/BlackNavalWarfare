@@ -8,13 +8,30 @@ public class BulletScript : MonoBehaviour
     [SerializeField]
     private float bulletSpeed = 10f;    // Speed at which the bullet travels
 
+    [SerializeField]
+    private float maxRange = 20f;       // Maximum range of the bullet
+
+    private Vector2 startPosition;      // The position where the bullet was instantiated
+
+    void Start()
+    {
+        // Store the initial position of the bullet
+        startPosition = transform.position;
+    }
+
     void Update()
     {
         // Move the bullet forward based on its speed and direction
         transform.Translate(Vector2.right * bulletSpeed * Time.deltaTime);
+
+        // Check if the bullet has exceeded its maximum range
+        float distanceTraveled = Vector2.Distance(startPosition, transform.position);
+        if (distanceTraveled >= maxRange)
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // This method is called when the bullet collides with another object
     void OnCollisionEnter2D(Collision2D collision)
     {
         // Check if the bullet hit something that can take damage (e.g., an enemy)

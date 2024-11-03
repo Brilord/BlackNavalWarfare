@@ -24,6 +24,11 @@ public class EnemyBaseScript : MonoBehaviour
     public GameObject destructionPopup;
     public GameObject retryButton;
     public GameObject quitButton;
+    public GameObject[] unitPrefabs; // Array of different unit prefabs
+public int[] unitCosts; // Array of costs for each unit
+public float spawnInterval = 5f; // Time interval between spawns
+public float resources = 100f; // Total resources available for spawning units
+
 
     // Start is called before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -66,6 +71,8 @@ public class EnemyBaseScript : MonoBehaviour
 
         // Start the health regeneration coroutine
         StartCoroutine(RegenerateHealth());
+        StartCoroutine(SpawnEnemies());
+
     }
 
     // Update is called once per frame
@@ -80,6 +87,71 @@ public class EnemyBaseScript : MonoBehaviour
     {
         SceneManager.LoadScene("BattleField"); // Reloads the current scene
     }
+    private IEnumerator SpawnEnemies()
+{
+    while (baseHP > 0)
+    {
+        yield return new WaitForSeconds(spawnInterval);
+
+        int unitIndex = SelectUnitToSpawn(); // Select a unit based on AI logic
+        SpawnSpecificUnit(unitIndex);
+    }
+}
+private int SelectUnitToSpawn()
+{
+    // Simple AI logic: Randomly select a unit that the AI can afford
+    for (int i = 0; i < unitPrefabs.Length; i++)
+    {
+        if (CanAfford(unitCosts[i]))
+        {
+            return i;
+        }
+    }
+
+    return -1; // Return -1 if no units can be afforded
+}
+
+private void SpawnSpecificUnit(int unitIndex)
+{
+    if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+    {
+        int unitCost = unitCosts[unitIndex];
+
+        if (CanAfford(unitCost))
+        {
+            resources -= unitCost;
+            TriggerResourceChanged();
+
+            Vector3 spawnPosition = transform.position;
+            spawnPosition.y = -3.4f;
+            Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
+
+            Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
+        }
+        else
+        {
+            Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("Invalid unit index selected.");
+    }
+}
+
+
+private bool CanAfford(int cost)
+{
+    return resources >= cost;
+}
+
+private void TriggerResourceChanged()
+{
+    Debug.Log("Resources updated: " + resources);
+}
+
+
+
 
     // Method to quit to the main menu (Quit)
     public void QuitToMainMenu()
