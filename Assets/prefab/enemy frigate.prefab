@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8299084192229035868}
   - component: {fileID: 1200189429970922441}
+  - component: {fileID: -6219441832325311429}
   m_Layer: 0
   m_Name: enemy frigate
   m_TagString: Untagged
@@ -87,3 +88,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-6219441832325311429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7460277447954329575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abc2183ab956a724892c90f5eb524074, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
