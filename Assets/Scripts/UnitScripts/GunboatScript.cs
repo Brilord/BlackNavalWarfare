@@ -8,10 +8,8 @@ public class GunboatScript : MonoBehaviour
     public float fireRate = 0.2f;    // Fire rate for the machine gun
     private float fireTimer = 0f;    // Timer for firing bullets
     public float bulletSpeed = 10f;  // Speed of the bullet
-
     public float moveSpeed = 1f;     // Speed for moving left and right
     private bool movingRight = true; // Direction of movement
-
     private Vector3 originalScale;   // Store the original scale of the object
 
     void Start()
@@ -24,7 +22,6 @@ public class GunboatScript : MonoBehaviour
     {
         // Handle shooting
         fireTimer += Time.deltaTime;
-
         if (fireTimer >= fireRate)
         {
             Shoot();
@@ -54,12 +51,12 @@ public class GunboatScript : MonoBehaviour
         }
 
         // Switch direction after reaching a certain boundary (e.g., screen width)
-        if (transform.position.x >= 10f && movingRight) // Adjust the boundary values as needed
+        if (transform.position.x >= 10f && movingRight)
         {
             movingRight = false;
             Flip(); // Flip the gunboat to face the opposite direction
         }
-        else if (transform.position.x <= -10f && !movingRight) // Adjust the boundary values as needed
+        else if (transform.position.x <= -10f && !movingRight)
         {
             movingRight = true;
             Flip(); // Flip the gunboat to face the opposite direction
@@ -99,5 +96,21 @@ public class GunboatScript : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+    }
+
+    // Detect collision with enemy bullets
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("EnemyBullet"))
+        {
+            // Assuming the enemy bullet has a script with a "damage" variable
+            int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+
+            // Apply damage to the gunboat
+            TakeDamage(bulletDamage);
+
+            // Destroy the enemy bullet after it hits
+            Destroy(collision.gameObject);
+        }
     }
 }

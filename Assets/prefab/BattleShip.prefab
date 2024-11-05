@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6405879567170615516}
   - component: {fileID: 201324537440038080}
   m_Layer: 0
-  m_Name: BattleShip_0
+  m_Name: BattleShip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

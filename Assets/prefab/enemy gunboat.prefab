@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 8304227671811011416}
   - component: {fileID: 3882053611925283323}
   - component: {fileID: 6071279899342323984}
+  - component: {fileID: 8462894774189420419}
+  - component: {fileID: -214821376420616365}
   m_Layer: 0
   m_Name: enemy gunboat
   m_TagString: Untagged
@@ -100,3 +102,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 683a049ab3edaec4cad68d7e34f41f6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 40
+  bulletPrefab: {fileID: 5204952030184590440, guid: a184bebcc804517478ce8dce0a630dbd, type: 3}
+  firePoint: {fileID: 8304227671811011416}
+  fireRate: 0.2
+  bulletSpeed: 10
+  moveSpeed: 1
+  cost: 50
+--- !u!61 &8462894774189420419
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324263373692171154}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.94, y: 0.51}
+    newSize: {x: 2.94, y: 0.51}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 2.94, y: 0.51}
+  m_EdgeRadius: 0
+--- !u!50 &-214821376420616365
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324263373692171154}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

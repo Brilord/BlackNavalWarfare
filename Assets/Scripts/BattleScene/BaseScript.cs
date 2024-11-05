@@ -11,6 +11,7 @@ public class BaseScript : MonoBehaviour
     public int resources = 100;
     public int maxResourceCapacity = 800;
     public int resourceGenerationRate = 20;
+    
     public TextMeshProUGUI resourceText;
 
     // Define events to notify listeners when resources or health change
@@ -120,7 +121,8 @@ public class BaseScript : MonoBehaviour
             0 => 60,
             1 => 80,
             2 => 400,
-            _ => 10
+            3 => 100,
+            _ => 0,
         };
     }
 

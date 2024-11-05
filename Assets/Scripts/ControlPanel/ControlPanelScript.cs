@@ -7,6 +7,8 @@ public class ControlPanelScript : MonoBehaviour
 {
     public Button lightGunboatButton;
     public Button smallAntiAirShipButton;
+    public Button battleshipButton; // New button for battleship
+    public Button cruiserButton; // New button for cruiser
     public Button quitButton;
     public Button resourceStorageUpgradeButton;
     public Button resourceGenerationIncreaseButton;
@@ -15,6 +17,12 @@ public class ControlPanelScript : MonoBehaviour
     public TextMeshProUGUI resourceText;
     public TextMeshProUGUI baseHealthText;
     public TextMeshProUGUI enemyBaseHealthText;
+    // Initial upgrade costs
+    private int resourceStorageUpgradeCost = 50;
+    private int resourceGenerationUpgradeCost = 30;
+
+    // Multiplier to increase upgrade costs each time
+    private float upgradeCostMultiplier = 1.2f;
 
     void Start()
     {
@@ -26,6 +34,16 @@ public class ControlPanelScript : MonoBehaviour
         if (smallAntiAirShipButton != null)
         {
             smallAntiAirShipButton.onClick.AddListener(OnSmallAntiAirShipButtonClick);
+        }
+
+        if (battleshipButton != null)
+        {
+            battleshipButton.onClick.AddListener(OnBattleshipButtonClick);
+        }
+
+        if (cruiserButton != null)
+        {
+            cruiserButton.onClick.AddListener(OnCruiserButtonClick);
         }
 
         if (quitButton != null)
@@ -73,6 +91,17 @@ public class ControlPanelScript : MonoBehaviour
         {
             OnSmallAntiAirShipButtonClick();
         }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3)) // Press "3" key for battleship
+        {
+            OnBattleshipButtonClick();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4)) // Press "4" key for cruiser
+        {
+            OnCruiserButtonClick();
+        }
+
         // Key bindings for upgrades
         if (Input.GetKeyDown(KeyCode.K)) // Press "K" key for resource generation increase
         {
@@ -140,21 +169,41 @@ public class ControlPanelScript : MonoBehaviour
         }
     }
 
+    void OnBattleshipButtonClick()
+    {
+        if (baseScript != null)
+        {
+            baseScript.SpawnSpecificUnit(3); // Assuming 3 is the index for battleship
+        }
+    }
+
+    void OnCruiserButtonClick()
+    {
+        if (baseScript != null)
+        {
+            baseScript.SpawnSpecificUnit(4); // Assuming 4 is the index for cruiser
+        }
+    }
+
     void OnResourceStorageUpgradeButtonClick()
     {
-        int upgradeCost = 50;
-        if (baseScript != null && baseScript.CanAfford(upgradeCost))
+        if (baseScript != null && baseScript.CanAfford(resourceStorageUpgradeCost))
         {
-            baseScript.UpgradeResourceStorage(200, upgradeCost);
+            baseScript.UpgradeResourceStorage(200, resourceStorageUpgradeCost);
+            
+            // Increase the cost for the next upgrade
+            resourceStorageUpgradeCost = Mathf.CeilToInt(resourceStorageUpgradeCost * upgradeCostMultiplier);
         }
     }
 
     void OnResourceGenerationIncreaseButtonClick()
     {
-        int upgradeCost = 30;
-        if (baseScript != null && baseScript.CanAfford(upgradeCost))
+        if (baseScript != null && baseScript.CanAfford(resourceGenerationUpgradeCost))
         {
-            baseScript.UpgradeResourceGeneration(5, upgradeCost);
+            baseScript.UpgradeResourceGeneration(5, resourceGenerationUpgradeCost);
+            
+            // Increase the cost for the next upgrade
+            resourceGenerationUpgradeCost = Mathf.CeilToInt(resourceGenerationUpgradeCost * upgradeCostMultiplier);
         }
     }
 
