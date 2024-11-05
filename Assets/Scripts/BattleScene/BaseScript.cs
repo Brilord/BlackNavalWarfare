@@ -87,32 +87,34 @@ public class BaseScript : MonoBehaviour
     }
 
     public void SpawnSpecificUnit(int unitIndex)
+{
+    if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
     {
-        if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+        int unitCost = GetUnitCost(unitIndex);
+
+        if (CanAfford(unitCost))
         {
-            int unitCost = GetUnitCost(unitIndex);
+            resources -= unitCost;
+            TriggerResourceChanged();
 
-            if (CanAfford(unitCost))
-            {
-                resources -= unitCost;
-                TriggerResourceChanged();
+            Vector3 spawnPosition = transform.position;
+            spawnPosition.y = -3.4f;
+            Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
 
-                Vector3 spawnPosition = transform.position;
-                spawnPosition.y = -3.4f;
-                Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
-
-                Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
-            }
-            else
-            {
-                Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
-            }
+            // Use Quaternion.identity to ensure units spawn with default rotation
+            Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
         }
         else
         {
-            Debug.LogWarning("Invalid unit index selected.");
+            Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
         }
     }
+    else
+    {
+        Debug.LogWarning("Invalid unit index selected.");
+    }
+}
+
 
     private int GetUnitCost(int unitIndex)
     {

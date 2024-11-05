@@ -4088,8 +4088,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightGunboatButton: {fileID: 1305273665}
   smallAntiAirShipButton: {fileID: 2122416561}
-  battleshipButton: {fileID: 0}
-  cruiserButton: {fileID: 0}
+  battleshipButton: {fileID: 730771793}
+  cruiserButton: {fileID: 2056409205}
   quitButton: {fileID: 1107990996}
   resourceStorageUpgradeButton: {fileID: 1911032729}
   resourceGenerationIncreaseButton: {fileID: 1059303086}
