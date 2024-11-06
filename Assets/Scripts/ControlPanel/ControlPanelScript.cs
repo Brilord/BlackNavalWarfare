@@ -173,7 +173,7 @@ public class ControlPanelScript : MonoBehaviour
     {
         if (baseScript != null)
         {
-            baseScript.SpawnSpecificUnit(3); // Assuming 3 is the index for battleship
+            baseScript.SpawnSpecificUnit(2); // Assuming 3 is the index for battleship
         }
     }
 
@@ -181,7 +181,7 @@ public class ControlPanelScript : MonoBehaviour
     {
         if (baseScript != null)
         {
-            baseScript.SpawnSpecificUnit(4); // Assuming 4 is the index for cruiser
+            baseScript.SpawnSpecificUnit(3); // Assuming 4 is the index for cruiser
         }
     }
 

@@ -3,59 +3,78 @@ using UnityEngine;
 public class SmallAntiAirShip : MonoBehaviour
 {
     public int health = 40;
-    public GameObject bulletPrefab;  // The bullet prefab to shoot
-    public Transform firePoint;      // The point where bullets will spawn
-    public float fireRate = 0.2f;    // Fire rate for the machine gun
-    private float fireTimer = 0f;    // Timer for firing bullets
-    public float bulletSpeed = 10f;  // Speed of the bullet
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float fireRate = 0.2f;
+    private float fireTimer = 0f;
+    public float bulletSpeed = 10f;
 
-    public float moveSpeed = 2f;     // Speed for moving left and right
-    private bool movingRight = true; // Direction of movement
+    public float moveSpeed = 2f;
+    private float currentSpeed;
+    private bool movingRight = true;
+
+    public float detectionRange = 5f; // Range within which to detect enemies
+    private GameObject targetEnemy = null;
+    public float stopDuration = 1f;   // Duration to come to a stop
+    private float stopTimer = 0f;     // Timer to track stopping duration
 
     void Start()
     {
-        // Initialize any starting logic
+        currentSpeed = moveSpeed;     // Initialize current speed to moveSpeed
     }
 
     void Update()
     {
-        // Handle shooting
-        fireTimer += Time.deltaTime;
+        DetectEnemy();
 
-        if (fireTimer >= fireRate)
+        if (targetEnemy != null)
         {
-            Shoot();
-            fireTimer = 0f;
-        }
+            // Gradually reduce speed to zero over stopDuration (1 second)
+            stopTimer += Time.deltaTime;
+            currentSpeed = Mathf.Lerp(moveSpeed, 0f, stopTimer / stopDuration);
 
-        // Check if the gunboat's health reaches zero
-        if (health <= 0)
-        {
-            Destroy(gameObject);  // Destroy the gunboat if health is 0
-        }
-
-        // Move the gunboat left and right
-        Move();
-    }
-
-    void Move()
-    {
-        // Move the gunboat in the current direction
-        if (movingRight)
-        {
-            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+            // Handle shooting
+            fireTimer += Time.deltaTime;
+            if (fireTimer >= fireRate)
+            {
+                Shoot();
+                fireTimer = 0f;
+            }
         }
         else
         {
-            transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
+            // Reset stop timer and speed if no enemy is detected
+            stopTimer = 0f;
+            currentSpeed = moveSpeed;
         }
 
-        // Switch direction after reaching a certain boundary (e.g., screen width)
-        if (transform.position.x >= 10f) // Adjust the boundary values as needed
+        // Move the ship with the current speed
+        Move(currentSpeed);
+
+        if (health <= 0)
+        {
+            Destroy(gameObject);  // Destroy the ship if health reaches zero
+        }
+    }
+
+    void Move(float speed)
+    {
+        // Move the ship in the current direction
+        if (movingRight)
+        {
+            transform.Translate(Vector2.right * speed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector2.left * speed * Time.deltaTime);
+        }
+
+        // Switch direction after reaching a certain boundary
+        if (transform.position.x >= 10f)
         {
             movingRight = false;
         }
-        else if (transform.position.x <= -10f) // Adjust the boundary values as needed
+        else if (transform.position.x <= -10f)
         {
             movingRight = true;
         }
@@ -63,13 +82,9 @@ public class SmallAntiAirShip : MonoBehaviour
 
     void Shoot()
     {
-        // Null check to prevent instantiating a destroyed or null bulletPrefab
         if (bulletPrefab != null)
         {
-            // Instantiate a bullet at the fire point
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            
-            // Add force to the bullet to move it forward
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -82,9 +97,35 @@ public class SmallAntiAirShip : MonoBehaviour
         }
     }
 
-    // Call this function when the gunboat takes damage
     public void TakeDamage(int damage)
     {
         health -= damage;
+    }
+
+    void DetectEnemy()
+    {
+        if (targetEnemy != null && targetEnemy == null)
+        {
+            targetEnemy = null;
+            return;
+        }
+
+        // Find the nearest enemy within range
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                targetEnemy = hit.gameObject;
+                break;
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        // Draw a sphere in the editor to visualize the detection range
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }

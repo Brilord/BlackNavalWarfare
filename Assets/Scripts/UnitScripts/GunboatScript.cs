@@ -3,83 +3,97 @@ using UnityEngine;
 public class GunboatScript : MonoBehaviour
 {
     public int health = 40;
-    public GameObject bulletPrefab;  // The bullet prefab to shoot
-    public Transform firePoint;      // The point where bullets will spawn
-    public float fireRate = 0.2f;    // Fire rate for the machine gun
-    private float fireTimer = 0f;    // Timer for firing bullets
-    public float bulletSpeed = 10f;  // Speed of the bullet
-    public float moveSpeed = 1f;     // Speed for moving left and right
-    private bool movingRight = true; // Direction of movement
-    private Vector3 originalScale;   // Store the original scale of the object
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public float fireRate = 0.2f;
+    private float fireTimer = 0f;
+    public float bulletSpeed = 10f;
+    public float moveSpeed = 1f;
+    private float currentSpeed;      // Current speed for gradual stop
+    private bool movingRight = true;
+    private Vector3 originalScale;
+    public float detectionRange = 5f;
+    private GameObject targetEnemy = null;
+    public float stopDuration = 1f;  // Duration to come to a stop
+    private float stopTimer = 0f;    // Timer to track stopping duration
 
     void Start()
     {
-        // Store the initial scale of the object
         originalScale = transform.localScale;
+        currentSpeed = moveSpeed;    // Initialize current speed to moveSpeed
     }
 
     void Update()
     {
-        // Handle shooting
-        fireTimer += Time.deltaTime;
-        if (fireTimer >= fireRate)
-        {
-            Shoot();
-            fireTimer = 0f;
-        }
+        DetectEnemy();
 
-        // Check if the gunboat's health reaches zero
-        if (health <= 0)
+        if (targetEnemy != null)
         {
-            Destroy(gameObject);  // Destroy the gunboat if health is 0
-        }
+            // Increment the stop timer to gradually reduce speed
+            stopTimer += Time.deltaTime;
 
-        // Move the gunboat left and right
-        Move();
-    }
+            // Gradually reduce speed to zero over stopDuration (1 second)
+            currentSpeed = Mathf.Lerp(moveSpeed, 0f, stopTimer / stopDuration);
 
-    void Move()
-    {
-        // Move the gunboat in the current direction
-        if (movingRight)
-        {
-            transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
+            // Handle shooting
+            fireTimer += Time.deltaTime;
+            if (fireTimer >= fireRate)
+            {
+                Shoot();
+                fireTimer = 0f;
+            }
         }
         else
         {
-            transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
+            // Reset the stop timer and speed when no enemy is in range
+            stopTimer = 0f;
+            currentSpeed = moveSpeed;
         }
 
-        // Switch direction after reaching a certain boundary (e.g., screen width)
+        // Move the gunboat with the current speed
+        Move(currentSpeed);
+
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void Move(float speed)
+    {
+        if (movingRight)
+        {
+            transform.Translate(Vector2.right * speed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector2.left * speed * Time.deltaTime);
+        }
+
         if (transform.position.x >= 10f && movingRight)
         {
             movingRight = false;
-            Flip(); // Flip the gunboat to face the opposite direction
+            Flip();
         }
         else if (transform.position.x <= -10f && !movingRight)
         {
             movingRight = true;
-            Flip(); // Flip the gunboat to face the opposite direction
+            Flip();
         }
     }
 
     void Flip()
     {
-        // Flip the gunboat by changing its scale on the X axis
         Vector3 newScale = originalScale;
-        newScale.x *= -1; // Invert the X scale to flip the sprite
+        newScale.x *= -1;
         transform.localScale = newScale;
     }
 
     void Shoot()
     {
-        // Null check to prevent instantiating a destroyed or null bulletPrefab
         if (bulletPrefab != null)
         {
-            // Instantiate a bullet at the fire point
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            
-            // Add force to the bullet to move it forward
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
@@ -92,25 +106,46 @@ public class GunboatScript : MonoBehaviour
         }
     }
 
-    // Call this function when the gunboat takes damage
     public void TakeDamage(int damage)
     {
         health -= damage;
     }
 
-    // Detect collision with enemy bullets
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("EnemyBullet"))
         {
-            // Assuming the enemy bullet has a script with a "damage" variable
             int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
-
-            // Apply damage to the gunboat
             TakeDamage(bulletDamage);
-
-            // Destroy the enemy bullet after it hits
             Destroy(collision.gameObject);
         }
+    }
+
+    void DetectEnemy()
+    {
+        if (targetEnemy != null)
+        {
+            if (targetEnemy == null)
+            {
+                targetEnemy = null;
+            }
+            return;
+        }
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                targetEnemy = hit.gameObject;
+                break;
+            }
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }

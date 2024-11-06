@@ -6,37 +6,23 @@ using UnityEngine.SceneManagement;
 
 public class EnemyBaseScript : MonoBehaviour
 {
-    // Base HP
     public float baseHP = 20000f;
     public float maxHP = 20000f;
-    
-    // Health regeneration variables
-    public float healthRegenRate = 5f; // Amount of health regenerated per second
-    public float regenInterval = 1f; // Time interval (in seconds) for regeneration
-
-    // Reference to the BoxCollider2D component
+    public float healthRegenRate = 5f;
+    public float regenInterval = 1f;
     private BoxCollider2D baseCollider;
-
-    // Reference to the UI Text element to display health
     public TextMeshProUGUI healthText;
-
-    // Reference to the popup panel that will display the destruction message
     public GameObject destructionPopup;
     public GameObject retryButton;
     public GameObject quitButton;
-    public GameObject[] unitPrefabs; // Array of different unit prefabs
-public int[] unitCosts; // Array of costs for each unit
-public float spawnInterval = 5f; // Time interval between spawns
-public float resources = 100f; // Total resources available for spawning units
+    public GameObject[] unitPrefabs;
+    public int[] unitCosts;
+    public float spawnInterval = 5f;
+    public float resources = 100f;
 
-
-    // Start is called before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Try to get the BoxCollider2D component attached to the enemy base
         baseCollider = GetComponent<BoxCollider2D>();
-
-        // If the collider is not found, add one dynamically
         if (baseCollider == null)
         {
             Debug.Log("Collider2D not found, adding BoxCollider2D to the enemy base.");
@@ -44,21 +30,20 @@ public float resources = 100f; // Total resources available for spawning units
             baseCollider.isTrigger = true;
         }
 
-        // Ensure the healthText is assigned in the Inspector
         if (healthText == null)
         {
             Debug.LogError("Health Text UI not assigned. Please assign it in the Inspector.");
         }
 
-        // Ensure the destructionPopup is assigned in the Inspector
         if (destructionPopup == null)
         {
             Debug.LogError("Destruction Popup UI not assigned. Please assign it in the Inspector.");
         }
         else
         {
-            destructionPopup.SetActive(false); // Hide it initially
+            destructionPopup.SetActive(false);
         }
+
         if (retryButton != null)
         {
             retryButton.GetComponent<Button>().onClick.AddListener(RestartGame);
@@ -69,13 +54,10 @@ public float resources = 100f; // Total resources available for spawning units
             quitButton.GetComponent<Button>().onClick.AddListener(QuitToMainMenu);
         }
 
-        // Start the health regeneration coroutine
         StartCoroutine(RegenerateHealth());
         StartCoroutine(SpawnEnemies());
-
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (baseHP <= 0)
@@ -83,83 +65,76 @@ public float resources = 100f; // Total resources available for spawning units
             DestroyBase();
         }
     }
+
     public void RestartGame()
     {
-        SceneManager.LoadScene("BattleField"); // Reloads the current scene
+        SceneManager.LoadScene("BattleField");
     }
-    private IEnumerator SpawnEnemies()
-{
-    while (baseHP > 0)
-    {
-        yield return new WaitForSeconds(spawnInterval);
 
-        int unitIndex = SelectUnitToSpawn(); // Select a unit based on AI logic
-        SpawnSpecificUnit(unitIndex);
-    }
-}
-private int SelectUnitToSpawn()
-{
-    // Simple AI logic: Randomly select a unit that the AI can afford
-    for (int i = 0; i < unitPrefabs.Length; i++)
+    private IEnumerator SpawnEnemies()
     {
-        if (CanAfford(unitCosts[i]))
+        while (baseHP > 0)
         {
-            return i;
+            yield return new WaitForSeconds(spawnInterval);
+            int unitIndex = SelectUnitToSpawn();
+            SpawnSpecificUnit(unitIndex);
         }
     }
 
-    return -1; // Return -1 if no units can be afforded
-}
-
-private void SpawnSpecificUnit(int unitIndex)
-{
-    if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+    private int SelectUnitToSpawn()
     {
-        int unitCost = unitCosts[unitIndex];
-
-        if (CanAfford(unitCost))
+        for (int i = 0; i < unitPrefabs.Length; i++)
         {
-            resources -= unitCost;
-            TriggerResourceChanged();
+            if (CanAfford(unitCosts[i]))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-            Vector3 spawnPosition = transform.position;
-            spawnPosition.y = -3.4f;
-            Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
+    private void SpawnSpecificUnit(int unitIndex)
+    {
+        if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+        {
+            int unitCost = unitCosts[unitIndex];
+            if (CanAfford(unitCost))
+            {
+                resources -= unitCost;
+                TriggerResourceChanged();
 
-            Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
+                Vector3 spawnPosition = transform.position;
+                spawnPosition.y = -3.4f;
+                Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
+
+                Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
+            }
+            else
+            {
+                Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+            }
         }
         else
         {
-            Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+            Debug.LogWarning("Invalid unit index selected.");
         }
     }
-    else
+
+    private bool CanAfford(int cost)
     {
-        Debug.LogWarning("Invalid unit index selected.");
+        return resources >= cost;
     }
-}
 
+    private void TriggerResourceChanged()
+    {
+        Debug.Log("Resources updated: " + resources);
+    }
 
-private bool CanAfford(int cost)
-{
-    return resources >= cost;
-}
-
-private void TriggerResourceChanged()
-{
-    Debug.Log("Resources updated: " + resources);
-}
-
-
-
-
-    // Method to quit to the main menu (Quit)
     public void QuitToMainMenu()
     {
-        SceneManager.LoadScene("StageSelector"); // Replace "MainMenu" with the name of your main menu scene
+        SceneManager.LoadScene("StageSelector");
     }
 
-    // Method to apply damage to the base
     public void ApplyDamage(float damageAmount)
     {
         baseHP -= damageAmount;
@@ -171,50 +146,60 @@ private void TriggerResourceChanged()
         }
     }
 
-    // Coroutine to regenerate health over time
     private IEnumerator RegenerateHealth()
     {
         while (baseHP > 0 && baseHP < maxHP)
         {
             yield return new WaitForSeconds(regenInterval);
-            baseHP = Mathf.Min(baseHP + healthRegenRate, maxHP); // Regenerate health up to maxHP
+            baseHP = Mathf.Min(baseHP + healthRegenRate, maxHP);
             UpdateHealthText();
             Debug.Log("Health regenerated. Current HP: " + baseHP);
         }
     }
 
-    // Handle the destruction of the base
     private void DestroyBase()
     {
         Debug.Log("Base destroyed! Final HP: " + baseHP + "/" + maxHP);
-        
-        // Show the destruction popup
+
         if (destructionPopup != null)
         {
-            destructionPopup.SetActive(true); // Make the popup visible
+            destructionPopup.SetActive(true);
         }
-        
-        Destroy(gameObject); // Destroy the base GameObject
+
+        Destroy(gameObject);
     }
 
-    // Detect trigger events with the bullet
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Check if the collision object has a BulletScript
         BulletScript bullet = collision.GetComponent<BulletScript>();
-        
         if (bullet != null)
         {
             ApplyDamage(bullet.GetBulletDamage());
             Destroy(collision.gameObject);
+            return;
+        }
+
+        // Check if the collision object has a MissileScript
+        MissileScript missile = collision.GetComponent<MissileScript>();
+        if (missile != null)
+        {
+            ApplyDamage(missile.GetMissileDamage());
+            Destroy(collision.gameObject);
         }
     }
 
-    // Update the health text on the screen
     private void UpdateHealthText()
     {
         if (healthText != null)
         {
             healthText.text = baseHP.ToString("F0") + "/" + maxHP.ToString("F0");
         }
+    }
+
+    // New method for gunboat to check if this is an enemy
+    public bool IsEnemy()
+    {
+        return true; // This object is an enemy base
     }
 }
