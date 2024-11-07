@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -5335107305981587232}
   m_Layer: 0
   m_Name: AnitAirShip
-  m_TagString: Untagged
+  m_TagString: Friendly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,6 +108,8 @@ MonoBehaviour:
   fireRate: 0.2
   bulletSpeed: 10
   moveSpeed: 2
+  detectionRange: 5
+  stopDuration: 1
 --- !u!50 &8041188438218149644
 Rigidbody2D:
   serializedVersion: 5

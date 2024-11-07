@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -8222072559376426569}
   m_Layer: 0
   m_Name: Cruiser
-  m_TagString: Untagged
+  m_TagString: Friendly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -113,6 +113,7 @@ MonoBehaviour:
   bulletDamage: 20
   moveSpeed: 1.5
   detectionRange: 7
+  missileRange: 5
   stopDuration: 1.5
   shieldRegenRate: 5
   shieldRegenCooldown: 3

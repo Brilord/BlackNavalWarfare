@@ -102,9 +102,7 @@ public class MissileScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the missile hit an object with the "Enemy" tag
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
+        
             EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
             if (enemy != null)
             {
@@ -113,7 +111,7 @@ public class MissileScript : MonoBehaviour
 
             // Destroy the missile after impact
             Destroy(gameObject);
-        }
+        
     }
     public float GetMissileDamage()
     {

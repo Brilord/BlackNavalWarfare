@@ -17,9 +17,15 @@ public class ControlPanelScript : MonoBehaviour
     public TextMeshProUGUI resourceText;
     public TextMeshProUGUI baseHealthText;
     public TextMeshProUGUI enemyBaseHealthText;
+    public Button healthRegenUpgradeButton; // New button for health regeneration
+    public Button healthCapacityUpgradeButton; // New button for health capacity
     // Initial upgrade costs
     private int resourceStorageUpgradeCost = 50;
     private int resourceGenerationUpgradeCost = 30;
+
+     // Initial upgrade costs
+    private int healthCapacityUpgradeCost = 60; // Initial cost for health capacity upgrade
+    private int healthRegenUpgradeCost = 40;    // Initial cost for health regeneration upgrade
 
     // Multiplier to increase upgrade costs each time
     private float upgradeCostMultiplier = 1.2f;
@@ -61,7 +67,16 @@ public class ControlPanelScript : MonoBehaviour
             resourceGenerationIncreaseButton.onClick.AddListener(OnResourceGenerationIncreaseButtonClick);
         }
 
-        // Subscribe to the resource and health changed events
+        if (healthRegenUpgradeButton != null)
+        {
+            healthRegenUpgradeButton.onClick.AddListener(OnHealthRegenUpgradeButtonClick);
+        }
+
+        if (healthCapacityUpgradeButton != null)
+        {
+            healthCapacityUpgradeButton.onClick.AddListener(OnHealthCapacityUpgradeButtonClick);
+        }
+
         if (baseScript != null)
         {
             baseScript.OnResourceChanged += UpdateResourceText;
@@ -73,7 +88,6 @@ public class ControlPanelScript : MonoBehaviour
             enemyBaseScript.OnHealthChanged += UpdateEnemyBaseHealthText;
         }
 
-        // Initialize the resource and health text displays
         UpdateResourceText();
         UpdateBaseHealthText();
         UpdateEnemyBaseHealthText();
@@ -204,6 +218,23 @@ public class ControlPanelScript : MonoBehaviour
             
             // Increase the cost for the next upgrade
             resourceGenerationUpgradeCost = Mathf.CeilToInt(resourceGenerationUpgradeCost * upgradeCostMultiplier);
+        }
+    }
+    void OnHealthRegenUpgradeButtonClick()
+    {
+        if (baseScript != null && baseScript.CanAfford(healthRegenUpgradeCost))
+        {
+            baseScript.UpgradeHealthRegen(2, healthRegenUpgradeCost);
+            healthRegenUpgradeCost = Mathf.CeilToInt(healthRegenUpgradeCost * upgradeCostMultiplier);
+        }
+    }
+
+    void OnHealthCapacityUpgradeButtonClick()
+    {
+        if (baseScript != null && baseScript.CanAfford(healthCapacityUpgradeCost))
+        {
+            baseScript.UpgradeHealthCapacity(50, healthCapacityUpgradeCost);
+            healthCapacityUpgradeCost = Mathf.CeilToInt(healthCapacityUpgradeCost * upgradeCostMultiplier);
         }
     }
 

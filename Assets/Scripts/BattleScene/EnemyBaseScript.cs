@@ -170,24 +170,25 @@ public class EnemyBaseScript : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // Check if the collision object has a BulletScript
-        BulletScript bullet = collision.GetComponent<BulletScript>();
-        if (bullet != null)
-        {
-            ApplyDamage(bullet.GetBulletDamage());
-            Destroy(collision.gameObject);
-            return;
-        }
+{
 
-        // Check if the collision object has a MissileScript
-        MissileScript missile = collision.GetComponent<MissileScript>();
-        if (missile != null)
-        {
-            ApplyDamage(missile.GetMissileDamage());
-            Destroy(collision.gameObject);
-        }
+    BulletScript bullet = collision.GetComponent<BulletScript>();
+    if (bullet != null)
+    {
+        ApplyDamage(bullet.GetBulletDamage());
+        Destroy(collision.gameObject);
+        return;
     }
+
+    MissileScript missile = collision.GetComponent<MissileScript>();
+    if (missile != null)
+    {
+        Debug.Log("Missile collision with enemy base");
+        ApplyDamage(missile.GetMissileDamage());
+        Destroy(collision.gameObject);
+        return;
+    }
+}
 
     private void UpdateHealthText()
     {

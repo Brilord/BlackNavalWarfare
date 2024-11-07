@@ -11,17 +11,35 @@ public class BaseScript : MonoBehaviour
     public int resources = 100;
     public int maxResourceCapacity = 800;
     public int resourceGenerationRate = 20;
-    
+
+     public int healthRegenRate = 5; // Amount of health to regenerate per second
     public TextMeshProUGUI resourceText;
 
     // Define events to notify listeners when resources or health change
     public event Action OnResourceChanged;
     public event Action OnHealthChanged;
 
+    // Define events to notify listeners when resources or health change
+    
+
     private void Start()
     {
         UpdateResourceText();
         StartCoroutine(GenerateResources());
+        StartCoroutine(RegenerateHealth());
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("EnemyBullet"))
+        {
+            // Assuming the bullet has a script with a damage property
+            int damage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+
+            TakeDamage(damage);
+
+            // Destroy the bullet after collision
+            Destroy(collision.gameObject);
+        }
     }
 
     private IEnumerator GenerateResources()
@@ -42,14 +60,29 @@ public class BaseScript : MonoBehaviour
             }
         }
     }
-    private void UpdateResourceText()
-{
-    if (resourceText != null)
-    {
-        resourceText.text = $"Resources: {resources}/{maxResourceCapacity}";
-    }
-}
 
+    private IEnumerator RegenerateHealth()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+
+            if (baseHealth < maxHealth)
+            {
+                baseHealth = Mathf.Min(baseHealth + healthRegenRate, maxHealth);
+                Debug.Log("Regenerated " + healthRegenRate + " health. Current health: " + baseHealth);
+                TriggerHealthChanged();
+            }
+        }
+    }
+
+    private void UpdateResourceText()
+    {
+        if (resourceText != null)
+        {
+            resourceText.text = $"Resources: {resources}/{maxResourceCapacity}";
+        }
+    }
 
     public bool CanAfford(int cost)
     {
@@ -86,35 +119,66 @@ public class BaseScript : MonoBehaviour
         }
     }
 
-    public void SpawnSpecificUnit(int unitIndex)
-{
-    if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+    public void UpgradeHealthRegen(int additionalRegenRate, int upgradeCost)
     {
-        int unitCost = GetUnitCost(unitIndex);
-
-        if (CanAfford(unitCost))
+        if (CanAfford(upgradeCost))
         {
-            resources -= unitCost;
+            resources -= upgradeCost;
+            healthRegenRate += additionalRegenRate;
+            Debug.Log("Health regeneration rate upgraded! New rate: " + healthRegenRate + " per second.");
             TriggerResourceChanged();
-
-            Vector3 spawnPosition = transform.position;
-            spawnPosition.y = -3.4f;
-            Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
-
-            // Use Quaternion.identity to ensure units spawn with default rotation
-            Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
         }
         else
         {
-            Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+            Debug.LogWarning("Not enough resources to upgrade health regeneration.");
         }
     }
-    else
-    {
-        Debug.LogWarning("Invalid unit index selected.");
-    }
-}
 
+    public void UpgradeHealthCapacity(int additionalCapacity, int upgradeCost)
+    {
+        if (CanAfford(upgradeCost))
+        {
+            resources -= upgradeCost;
+            maxHealth += additionalCapacity;
+            baseHealth = Mathf.Min(baseHealth, maxHealth); // Ensure current health doesn't exceed the new max
+            Debug.Log("Health capacity upgraded! New max health: " + maxHealth);
+            TriggerResourceChanged();
+            TriggerHealthChanged();
+        }
+        else
+        {
+            Debug.LogWarning("Not enough resources to upgrade health capacity.");
+        }
+    }
+
+    public void SpawnSpecificUnit(int unitIndex)
+    {
+        if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+        {
+            int unitCost = GetUnitCost(unitIndex);
+
+            if (CanAfford(unitCost))
+            {
+                resources -= unitCost;
+                TriggerResourceChanged();
+
+                Vector3 spawnPosition = transform.position;
+                spawnPosition.y = -3.4f;
+                Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
+
+                // Use Quaternion.identity to ensure units spawn with default rotation
+                Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Invalid unit index selected.");
+        }
+    }
 
     private int GetUnitCost(int unitIndex)
     {
