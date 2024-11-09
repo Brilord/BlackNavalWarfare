@@ -1193,8 +1193,8 @@ Transform:
   m_GameObject: {fileID: 464033454}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.9049, y: -1.96, z: -4}
-  m_LocalScale: {x: 0.5, y: 0.7, z: 1}
+  m_LocalPosition: {x: 11.293, y: -2.4663, z: -4}
+  m_LocalScale: {x: 0.38895, y: 0.59822, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1215,15 +1215,17 @@ MonoBehaviour:
   maxHP: 20000
   healthRegenRate: 5
   regenInterval: 1
+  resourceGenerationRate: 10
+  upgradeInterval: 30
   healthText: {fileID: 247571507}
   destructionPopup: {fileID: 752304008}
   retryButton: {fileID: 1370802535}
   quitButton: {fileID: 1142385920}
   unitPrefabs:
-  - {fileID: 5234884587236387394}
-  - {fileID: 6579171381532784743}
-  - {fileID: 3365668674572774959}
-  unitCosts: 
+  - {fileID: 7460277447954329575, guid: fcd40caf0e3e54f47861e95f0ec20699, type: 3}
+  - {fileID: 5324263373692171154, guid: 52d4c30cdc66e9f4abb04ab5dddb000b, type: 3}
+  - {fileID: 1737519976816822327, guid: 81e5ff388c82b7147996145f9df96629, type: 3}
+  unitCosts: 64000000320000003c000000
   spawnInterval: 1
   resources: 100
 --- !u!50 &464033458
@@ -4580,7 +4582,7 @@ GameObject:
   - component: {fileID: 1998885934}
   m_Layer: 0
   m_Name: PlayerBase
-  m_TagString: Untagged
+  m_TagString: Friendly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4736,7 +4738,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -5528,11 +5530,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81e5ff388c82b7147996145f9df96629, type: 3}
---- !u!1 &3365668674572774959 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1737519976816822327, guid: 81e5ff388c82b7147996145f9df96629, type: 3}
-  m_PrefabInstance: {fileID: 3365668674572774958}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4882694255316120674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5663,11 +5660,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcd40caf0e3e54f47861e95f0ec20699, type: 3}
---- !u!1 &5234884587236387394 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7460277447954329575, guid: fcd40caf0e3e54f47861e95f0ec20699, type: 3}
-  m_PrefabInstance: {fileID: 5234884587236387393}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6579171381532784742
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5737,11 +5729,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52d4c30cdc66e9f4abb04ab5dddb000b, type: 3}
---- !u!1 &6579171381532784743 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5324263373692171154, guid: 52d4c30cdc66e9f4abb04ab5dddb000b, type: 3}
-  m_PrefabInstance: {fileID: 6579171381532784742}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6579171381532784744 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8304227671811011416, guid: 52d4c30cdc66e9f4abb04ab5dddb000b, type: 3}
@@ -5839,6 +5826,10 @@ PrefabInstance:
     - target: {fileID: 1975807724040017955, guid: a7c7b2069a53516439d0ca7247802da8, type: 3}
       propertyPath: m_Name
       value: Missiles
+      objectReference: {fileID: 0}
+    - target: {fileID: 1975807724040017955, guid: a7c7b2069a53516439d0ca7247802da8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3792018617579101736, guid: a7c7b2069a53516439d0ca7247802da8, type: 3}
       propertyPath: m_LocalPosition.x

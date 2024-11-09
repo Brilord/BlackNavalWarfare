@@ -10,6 +10,9 @@ public class EnemyBaseScript : MonoBehaviour
     public float maxHP = 20000f;
     public float healthRegenRate = 5f;
     public float regenInterval = 1f;
+    public float resourceGenerationRate = 10f; // New field for resource generation rate
+    public float upgradeInterval = 30f; // Interval for upgrading base stats
+
     private BoxCollider2D baseCollider;
     public TextMeshProUGUI healthText;
     public GameObject destructionPopup;
@@ -56,6 +59,8 @@ public class EnemyBaseScript : MonoBehaviour
 
         StartCoroutine(RegenerateHealth());
         StartCoroutine(SpawnEnemies());
+        StartCoroutine(GenerateResources()); // Start resource generation
+        StartCoroutine(UpgradeOverTime());   // Start upgrades over time
     }
 
     void Update()
@@ -76,21 +81,33 @@ public class EnemyBaseScript : MonoBehaviour
         while (baseHP > 0)
         {
             yield return new WaitForSeconds(spawnInterval);
-            int unitIndex = SelectUnitToSpawn();
-            SpawnSpecificUnit(unitIndex);
+            int unitIndex = SelectRandomUnitToSpawn();
+            if (unitIndex != -1)
+            {
+                SpawnSpecificUnit(unitIndex);
+            }
         }
     }
 
-    private int SelectUnitToSpawn()
+    private int SelectRandomUnitToSpawn()
     {
+        // Get list of affordable units
+        System.Collections.Generic.List<int> affordableUnits = new System.Collections.Generic.List<int>();
         for (int i = 0; i < unitPrefabs.Length; i++)
         {
             if (CanAfford(unitCosts[i]))
             {
-                return i;
+                affordableUnits.Add(i);
             }
         }
-        return -1;
+
+        if (affordableUnits.Count > 0)
+        {
+            // Select a random affordable unit
+            return affordableUnits[Random.Range(0, affordableUnits.Count)];
+        }
+        
+        return -1; // No units can be afforded
     }
 
     private void SpawnSpecificUnit(int unitIndex)
@@ -105,9 +122,9 @@ public class EnemyBaseScript : MonoBehaviour
 
                 Vector3 spawnPosition = transform.position;
                 spawnPosition.y = -3.4f;
-                Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
+                Debug.Log($"Spawning {unitPrefabs[unitIndex].name} at {spawnPosition}. Cost: {unitCost} resources. Remaining: {resources}");
 
-                Instantiate(unitPrefabs[unitIndex], spawnPosition, transform.rotation);
+                Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
             }
             else
             {
@@ -116,7 +133,7 @@ public class EnemyBaseScript : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Invalid unit index selected.");
+            Debug.LogWarning("Invalid unit index selected. Check unitPrefabs array.");
         }
     }
 
@@ -128,6 +145,30 @@ public class EnemyBaseScript : MonoBehaviour
     private void TriggerResourceChanged()
     {
         Debug.Log("Resources updated: " + resources);
+    }
+
+    private IEnumerator GenerateResources()
+    {
+        while (baseHP > 0)
+        {
+            yield return new WaitForSeconds(1f); // Generate resources every second
+            resources += resourceGenerationRate;
+            TriggerResourceChanged();
+        }
+    }
+
+    private IEnumerator UpgradeOverTime()
+    {
+        while (baseHP > 0)
+        {
+            yield return new WaitForSeconds(upgradeInterval);
+
+            // Increase health regeneration rate and resource generation rate as upgrades
+            healthRegenRate += 2f;          // Increase health regen
+            resourceGenerationRate += 5f;    // Increase resource generation
+
+            Debug.Log("Base upgraded! New Health Regen Rate: " + healthRegenRate + ", New Resource Generation Rate: " + resourceGenerationRate);
+        }
     }
 
     public void QuitToMainMenu()
@@ -170,25 +211,24 @@ public class EnemyBaseScript : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-{
-
-    BulletScript bullet = collision.GetComponent<BulletScript>();
-    if (bullet != null)
     {
-        ApplyDamage(bullet.GetBulletDamage());
-        Destroy(collision.gameObject);
-        return;
-    }
+        BulletScript bullet = collision.GetComponent<BulletScript>();
+        if (bullet != null)
+        {
+            ApplyDamage(bullet.GetBulletDamage());
+            Destroy(collision.gameObject);
+            return;
+        }
 
-    MissileScript missile = collision.GetComponent<MissileScript>();
-    if (missile != null)
-    {
-        Debug.Log("Missile collision with enemy base");
-        ApplyDamage(missile.GetMissileDamage());
-        Destroy(collision.gameObject);
-        return;
+        MissileScript missile = collision.GetComponent<MissileScript>();
+        if (missile != null)
+        {
+            Debug.Log("Missile collision with enemy base");
+            ApplyDamage(missile.GetMissileDamage());
+            Destroy(collision.gameObject);
+            return;
+        }
     }
-}
 
     private void UpdateHealthText()
     {
