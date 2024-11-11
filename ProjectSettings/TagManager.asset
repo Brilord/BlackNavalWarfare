@@ -8,6 +8,9 @@ TagManager:
   - Friendly
   - EnemyBullet
   - Bullet
+  - LargeBullet
+  - Missile
+  - EnemyMissile
   layers:
   - Default
   - TransparentFX

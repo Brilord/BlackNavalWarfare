@@ -21,23 +21,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
         currentSpeed = moveSpeed;     // Initialize current speed
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        // Check if the collided object has the tag "Bullet"
-        if (collision.gameObject.CompareTag("Bullet"))
-        {
-            // Optionally, you can retrieve the damage from the bullet if it has a script with a damage property
-            BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
-            if (bullet != null)
-            {
-                // Take damage based on the bullet's damage value
-                TakeDamage(bullet.GetBulletDamage());
-            }
-
-            // Destroy the bullet after it hits the gunboat
-            Destroy(collision.gameObject);
-        }
-    }
+    
 
     void Update()
     {
@@ -118,6 +102,20 @@ public class EnemyAntiAirShipScript : MonoBehaviour
                 targetFriendly = hit.gameObject;
                 break;
             }
+        }
+    }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet") || collision.CompareTag("Missile") || collision.CompareTag("LargeBullet"))
+        {
+            BulletScript bullet = collision.GetComponent<BulletScript>();
+            if (bullet != null)
+            {
+                int bulletDamage = bullet.GetBulletDamage();
+                TakeDamage(bulletDamage);
+                Debug.Log("Took damage from " + collision.tag + " with damage: " + bulletDamage);
+            }
+            Destroy(collision.gameObject);
         }
     }
 

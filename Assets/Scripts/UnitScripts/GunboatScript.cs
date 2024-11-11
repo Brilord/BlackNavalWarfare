@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GunboatScript : MonoBehaviour
 {
@@ -9,18 +10,24 @@ public class GunboatScript : MonoBehaviour
     private float fireTimer = 0f;
     public float bulletSpeed = 10f;
     public float moveSpeed = 1f;
-    private float currentSpeed;      // Current speed for gradual stop
+    private float currentSpeed;
     private bool movingRight = true;
     private Vector3 originalScale;
     public float detectionRange = 5f;
     private GameObject targetEnemy = null;
-    public float stopDuration = 1f;  // Duration to come to a stop
-    private float stopTimer = 0f;    // Timer to track stopping duration
+    public float stopDuration = 1f;
+    private float stopTimer = 0f;
+
+    // Reference to the health text
+    public Text healthText;
 
     void Start()
     {
         originalScale = transform.localScale;
-        currentSpeed = moveSpeed;    // Initialize current speed to moveSpeed
+        currentSpeed = moveSpeed;
+
+        // Initialize health text
+        UpdateHealthText();
     }
 
     void Update()
@@ -29,13 +36,9 @@ public class GunboatScript : MonoBehaviour
 
         if (targetEnemy != null)
         {
-            // Increment the stop timer to gradually reduce speed
             stopTimer += Time.deltaTime;
-
-            // Gradually reduce speed to zero over stopDuration (1 second)
             currentSpeed = Mathf.Lerp(moveSpeed, 0f, stopTimer / stopDuration);
 
-            // Handle shooting
             fireTimer += Time.deltaTime;
             if (fireTimer >= fireRate)
             {
@@ -45,12 +48,10 @@ public class GunboatScript : MonoBehaviour
         }
         else
         {
-            // Reset the stop timer and speed when no enemy is in range
             stopTimer = 0f;
             currentSpeed = moveSpeed;
         }
 
-        // Move the gunboat with the current speed
         Move(currentSpeed);
 
         if (health <= 0)
@@ -109,26 +110,30 @@ public class GunboatScript : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+        UpdateHealthText();
+
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        // Check if the collision is with an enemy bullet, missile, or large bullet
         if (collision.CompareTag("EnemyBullet"))
         {
             int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
             TakeDamage(bulletDamage);
             Destroy(collision.gameObject);
         }
+        
     }
 
     void DetectEnemy()
     {
         if (targetEnemy != null)
         {
-            if (targetEnemy == null)
-            {
-                targetEnemy = null;
-            }
             return;
         }
 
@@ -140,6 +145,18 @@ public class GunboatScript : MonoBehaviour
                 targetEnemy = hit.gameObject;
                 break;
             }
+        }
+    }
+
+    void UpdateHealthText()
+    {
+        if (healthText != null)
+        {
+            healthText.text = health.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("Health Text is not assigned!");
         }
     }
 

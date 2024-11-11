@@ -103,12 +103,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  gunBulletPrefab: {fileID: 8823610343006163288, guid: 86ba6ce643dde9f4580888d0d6811def, type: 3}
+  gunBulletPrefab: {fileID: 4278143839499493249, guid: c9ca52cc3a18d6c4396bf9596517d27e, type: 3}
   missilePrefab: {fileID: 1975807724040017955, guid: a7c7b2069a53516439d0ca7247802da8, type: 3}
   gun1FirePoint: {fileID: 6405879567170615516}
   gun2FirePoint: {fileID: 6405879567170615516}
   missileFirePoint: {fileID: 6405879567170615516}
-  gunFireRate: 0.5
+  gunFireRate: 2
   missileFireRate: 5
   gunBulletSpeed: 15
   missileSpeed: 8

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1340561751652724643}
   - component: {fileID: 859765632156251795}
   - component: {fileID: 5698751892915808988}
+  - component: {fileID: -8327817544770862842}
   m_Layer: 0
   m_Name: LargeEnemyBullet
   m_TagString: Untagged
@@ -134,3 +135,15 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.45, y: 0.27}
   m_EdgeRadius: 0
+--- !u!114 &-8327817544770862842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233026951474153248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b70d4ad81dee5ed40b6c594eb57976ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

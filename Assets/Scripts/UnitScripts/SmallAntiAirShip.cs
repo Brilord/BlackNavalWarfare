@@ -127,4 +127,15 @@ public class SmallAntiAirShip : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Check if the collision is with an enemy bullet, missile, or large bullet
+        if (collision.CompareTag("EnemyBullet"))
+        {
+            int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+            TakeDamage(bulletDamage);
+            Destroy(collision.gameObject);
+        }
+        
+    }
 }

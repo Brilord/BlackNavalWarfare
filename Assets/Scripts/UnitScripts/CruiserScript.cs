@@ -155,18 +155,16 @@ public class CruiserScript : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("EnemyBullet"))
+        // Check if the collision is with an enemy bullet, missile, or large bullet
+        if (collision.CompareTag("EnemyBullet"))
         {
-            BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
-            if (bullet != null)
-            {
-                TakeDamage(bullet.GetBulletDamage());
-            }
-
+            int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+            TakeDamage(bulletDamage);
             Destroy(collision.gameObject);
         }
+       
     }
 
     void OnDrawGizmosSelected()

@@ -110,6 +110,7 @@ MonoBehaviour:
   moveSpeed: 1
   detectionRange: 5
   stopDuration: 1
+  healthText: {fileID: 0}
 --- !u!61 &4830875779627042276
 BoxCollider2D:
   m_ObjectHideFlags: 0

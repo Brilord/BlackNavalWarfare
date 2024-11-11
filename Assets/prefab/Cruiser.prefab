@@ -103,8 +103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  shield: 50
-  maxShield: 50
   bulletPrefab: {fileID: 8823610343006163288, guid: 86ba6ce643dde9f4580888d0d6811def, type: 3}
   missilePrefab: {fileID: 1975807724040017955, guid: a7c7b2069a53516439d0ca7247802da8, type: 3}
   firePoint: {fileID: 5217858310456178542}
@@ -113,8 +111,6 @@ MonoBehaviour:
   detectionRange: 7
   missileRange: 5
   stopDuration: 1.5
-  shieldRegenRate: 5
-  shieldRegenCooldown: 3
   missileFireInterval: 5
 --- !u!61 &7847182850128633411
 BoxCollider2D:

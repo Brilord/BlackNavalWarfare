@@ -66,48 +66,28 @@ public class EnemyGunboatScript : MonoBehaviour
         Move();
     }
 
-void Move()
-{
-    // Always move to the left
-    transform.Translate(Vector2.left * currentSpeed * Time.deltaTime);
-}
-
-void OnCollisionEnter2D(Collision2D collision)
-{
-    Debug.Log("Collision detected with " + collision.gameObject.name); // Log the name of the collided object
-
-    // Check if the collided object has the tag "Bullet"
-    if (collision.gameObject.CompareTag("Bullet"))
+    void Move()
     {
-        Debug.Log("Collision with bullet detected!"); // Confirm that the object has the "Bullet" tag
-
-        // Try to get the BulletScript component from the bullet
-        BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
-        if (bullet != null)
-        {
-            Debug.Log("BulletScript found on the bullet! Damage: " + bullet.GetBulletDamage()); // Log bullet damage
-
-            // Take damage based on the bullet's damage value
-            TakeDamage(bullet.GetBulletDamage());
-        }
-        else
-        {
-            Debug.LogWarning("No BulletScript found on the bullet object!"); // Warn if BulletScript is missing
-        }
-
-        // Destroy the bullet after it hits the gunboat
-        Destroy(collision.gameObject);
-        Debug.Log("Bullet destroyed after collision with gunboat."); // Confirm bullet destruction
+        // Always move to the left
+        transform.Translate(Vector2.left * currentSpeed * Time.deltaTime);
     }
-    else
+
+    
+
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Collision with non-bullet object: " + collision.gameObject.tag); // Log tag of non-bullet objects
+        if (collision.CompareTag("Bullet") || collision.CompareTag("Missile") || collision.CompareTag("LargeBullet"))
+        {
+            BulletScript bullet = collision.GetComponent<BulletScript>();
+            if (bullet != null)
+            {
+                int bulletDamage = bullet.GetBulletDamage();
+                TakeDamage(bulletDamage);
+                Debug.Log("Took damage from " + collision.tag + " with damage: " + bulletDamage);
+            }
+            Destroy(collision.gameObject);
+        }
     }
-}
-
-
-
-
 
     void Flip()
     {
