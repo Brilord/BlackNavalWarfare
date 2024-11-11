@@ -38,7 +38,6 @@ public class MissileScript : MonoBehaviour
         if (isHoming && target != null)
         {
             MoveMissile();
-            RotateInMovementDirection();
         }
         
         UpdateLifetime();
@@ -80,25 +79,16 @@ public class MissileScript : MonoBehaviour
     {
         if (target != null)
         {
-            float distanceToTarget = Vector2.Distance(transform.position, target.position);
-
-            // Check if the missile is close enough to the target to stop rotating
-            if (distanceToTarget > stoppingDistance)
-            {
-                Vector2 direction = (target.position - transform.position).normalized;
-                float rotateAmount = Vector2.SignedAngle(transform.right, direction);
-                transform.Rotate(0, 0, rotateAmount * rotationSpeed * Time.deltaTime);
-            }
+            Vector2 direction = (target.position - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
+            
+            // Smoothly rotate the missile towards the target
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            
+            // Move missile forward in the direction it is facing
+            transform.Translate(Vector2.right * speed * Time.deltaTime);
         }
-
-        transform.Translate(Vector2.right * speed * Time.deltaTime);
-    }
-
-    void RotateInMovementDirection()
-    {
-        Vector2 velocity = transform.right * speed; // Current movement direction
-        float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg; // Calculate angle in degrees
-        transform.rotation = Quaternion.Euler(0, 0, angle); // Apply rotation
     }
 
     void UpdateLifetime()

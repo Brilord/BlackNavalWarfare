@@ -7,7 +7,6 @@ public class SmallAntiAirShip : MonoBehaviour
     public Transform firePoint;
     public float fireRate = 0.2f;
     private float fireTimer = 0f;
-    public float bulletSpeed = 10f;
 
     public float moveSpeed = 2f;
     private float currentSpeed;
@@ -88,7 +87,7 @@ public class SmallAntiAirShip : MonoBehaviour
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.linearVelocity = firePoint.right * bulletSpeed;
+                rb.linearVelocity = firePoint.right; // Set velocity based on direction without speed multiplier
             }
         }
         else

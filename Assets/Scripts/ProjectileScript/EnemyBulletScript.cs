@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemyBulletScript : MonoBehaviour
 {
     [SerializeField]
-    private int bulletDamage = 10;       // Damage dealt by the enemy bullet
+    private int bulletDamage = 1;       // Damage dealt by the enemy bullet
 
     [SerializeField]
     private float bulletSpeed = 10f;     // Speed at which the enemy bullet travels
@@ -41,6 +41,41 @@ public class EnemyBulletScript : MonoBehaviour
             // Apply damage to the player
             player.TakeDamage(bulletDamage);
         }
+
+        // Check if the bullet hit the gunboat
+        GunboatScript gunboat = collision.gameObject.GetComponent<GunboatScript>();
+        if (gunboat != null)
+        {
+            // Apply damage to the gunboat
+            gunboat.TakeDamage(bulletDamage);
+        }
+
+        // Check if the bullet hit the friendly base
+        BaseScript baseScript = collision.gameObject.GetComponent<BaseScript>();
+        if (baseScript != null)
+        {
+            // Apply damage to the base
+            baseScript.TakeDamage(bulletDamage);
+        }
+        CruiserScript cruiser = collision.gameObject.GetComponent<CruiserScript>();
+        if (cruiser != null)
+        {
+            // Apply damage to the cruiser
+            cruiser.TakeDamage(bulletDamage);
+        }
+        SmallAntiAirShip smallAntiAirShip = collision.gameObject.GetComponent<SmallAntiAirShip>();
+        if (smallAntiAirShip != null)
+        {
+            // Apply damage to the small anti-air ship
+            smallAntiAirShip.TakeDamage(bulletDamage);
+        }
+        BattleShipScript battleShip = collision.gameObject.GetComponent<BattleShipScript>();
+        if (battleShip != null)
+        {
+            // Apply damage to the battleship
+            battleShip.TakeDamage(bulletDamage);
+        }
+        
 
         // Destroy the bullet instance after it hits something
         Destroy(gameObject);

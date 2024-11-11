@@ -66,30 +66,48 @@ public class EnemyGunboatScript : MonoBehaviour
         Move();
     }
 
-    void Move()
+void Move()
+{
+    // Always move to the left
+    transform.Translate(Vector2.left * currentSpeed * Time.deltaTime);
+}
+
+void OnCollisionEnter2D(Collision2D collision)
+{
+    Debug.Log("Collision detected with " + collision.gameObject.name); // Log the name of the collided object
+
+    // Check if the collided object has the tag "Bullet"
+    if (collision.gameObject.CompareTag("Bullet"))
     {
-        // Move in the current direction
-        if (movingRight)
+        Debug.Log("Collision with bullet detected!"); // Confirm that the object has the "Bullet" tag
+
+        // Try to get the BulletScript component from the bullet
+        BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
+        if (bullet != null)
         {
-            transform.Translate(Vector2.right * currentSpeed * Time.deltaTime);
+            Debug.Log("BulletScript found on the bullet! Damage: " + bullet.GetBulletDamage()); // Log bullet damage
+
+            // Take damage based on the bullet's damage value
+            TakeDamage(bullet.GetBulletDamage());
         }
         else
         {
-            transform.Translate(Vector2.left * currentSpeed * Time.deltaTime);
+            Debug.LogWarning("No BulletScript found on the bullet object!"); // Warn if BulletScript is missing
         }
 
-        // Switch direction after reaching certain boundaries
-        if (transform.position.x >= 10f && movingRight)
-        {
-            movingRight = false;
-            Flip();
-        }
-        else if (transform.position.x <= -10f && !movingRight)
-        {
-            movingRight = true;
-            Flip();
-        }
+        // Destroy the bullet after it hits the gunboat
+        Destroy(collision.gameObject);
+        Debug.Log("Bullet destroyed after collision with gunboat."); // Confirm bullet destruction
     }
+    else
+    {
+        Debug.Log("Collision with non-bullet object: " + collision.gameObject.tag); // Log tag of non-bullet objects
+    }
+}
+
+
+
+
 
     void Flip()
     {

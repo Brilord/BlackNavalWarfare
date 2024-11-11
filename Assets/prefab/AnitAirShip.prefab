@@ -106,7 +106,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8823610343006163288, guid: 86ba6ce643dde9f4580888d0d6811def, type: 3}
   firePoint: {fileID: 8818019922932108354}
   fireRate: 0.2
-  bulletSpeed: 10
   moveSpeed: 2
   detectionRange: 5
   stopDuration: 1
@@ -167,11 +166,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.13631964}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -181,5 +180,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.43, y: 0.5}
+  m_Size: {x: 3.43, y: 0.7726393}
   m_EdgeRadius: 0

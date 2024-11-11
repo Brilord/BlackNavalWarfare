@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BattleShipScript : MonoBehaviour
 {
-    public int health = 100;
+    public int health = 1000;
     public GameObject gunBulletPrefab;
     public GameObject missilePrefab;
     public Transform gun1FirePoint;
@@ -30,6 +30,7 @@ public class BattleShipScript : MonoBehaviour
         originalScale = transform.localScale;
         currentSpeed = moveSpeed;
     }
+    
 
     void Update()
     {

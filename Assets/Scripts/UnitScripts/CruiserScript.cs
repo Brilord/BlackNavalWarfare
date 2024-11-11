@@ -3,15 +3,11 @@ using UnityEngine;
 public class CruiserScript : MonoBehaviour
 {
     public int health = 100;
-    public int shield = 50;
-    public int maxShield = 50;
     public GameObject bulletPrefab;
     public GameObject missilePrefab;           // Missile prefab for shooting missiles
     public Transform firePoint;
     public float fireRate = 0.5f;
     private float fireTimer = 0f;
-    public float bulletSpeed = 15f;
-    public int bulletDamage = 20;
 
     public float moveSpeed = 1.5f;
     private float currentSpeed;
@@ -22,10 +18,6 @@ public class CruiserScript : MonoBehaviour
     private GameObject targetEnemy = null;
     public float stopDuration = 1.5f;
     private float stopTimer = 0f;
-
-    public float shieldRegenRate = 5f;
-    public float shieldRegenCooldown = 3f;
-    private float shieldRegenTimer = 0f;
 
     public float missileFireInterval = 5f;     // Interval for firing missiles
     private float missileFireTimer = 0f;
@@ -68,11 +60,6 @@ public class CruiserScript : MonoBehaviour
 
         Move(currentSpeed);
 
-        if (targetEnemy == null)
-        {
-            RegenerateShield();
-        }
-
         if (health <= 0)
         {
             Destroy(gameObject);
@@ -105,10 +92,15 @@ public class CruiserScript : MonoBehaviour
         if (bulletPrefab != null)
         {
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            if (rb != null)
+            BulletScript bulletScript = bullet.GetComponent<BulletScript>();
+
+            if (bulletScript != null)
             {
-                rb.linearVelocity = firePoint.right * bulletSpeed;
+                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.linearVelocity = firePoint.right * bulletScript.GetBulletSpeed();  // Get bullet speed from BulletScript
+                }
             }
         }
         else
@@ -125,7 +117,7 @@ public class CruiserScript : MonoBehaviour
             Rigidbody2D rb = missile.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.linearVelocity = firePoint.right * bulletSpeed;
+                rb.linearVelocity = firePoint.right * 10f;  // Assign a separate speed for missiles
             }
         }
         else
@@ -136,18 +128,12 @@ public class CruiserScript : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (shield > 0)
-        {
-            int remainingDamage = Mathf.Max(damage - shield, 0);
-            shield -= damage;
-            health -= remainingDamage;
-        }
-        else
-        {
-            health -= damage;
-        }
+        health -= damage;
 
-        shieldRegenTimer = 0f;
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void DetectEnemy()
@@ -169,17 +155,17 @@ public class CruiserScript : MonoBehaviour
         }
     }
 
-    void RegenerateShield()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (shield < maxShield)
+        if (collision.gameObject.CompareTag("EnemyBullet"))
         {
-            shieldRegenTimer += Time.deltaTime;
-
-            if (shieldRegenTimer >= shieldRegenCooldown)
+            BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
+            if (bullet != null)
             {
-                shield += Mathf.CeilToInt(shieldRegenRate * Time.deltaTime);
-                shield = Mathf.Min(shield, maxShield);
+                TakeDamage(bullet.GetBulletDamage());
             }
+
+            Destroy(collision.gameObject);
         }
     }
 

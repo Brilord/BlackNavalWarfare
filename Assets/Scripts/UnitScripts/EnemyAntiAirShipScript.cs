@@ -7,11 +7,9 @@ public class EnemyAntiAirShipScript : MonoBehaviour
     public Transform firePoint;
     public float fireRate = 0.5f;
     private float fireTimer = 0f;
-    public float bulletSpeed = 12f;
 
     public float moveSpeed = 2f;
     private float currentSpeed;
-    private bool movingRight = true;
 
     public float detectionRange = 7f; // Detection range for friendly units
     private GameObject targetFriendly = null;
@@ -21,6 +19,24 @@ public class EnemyAntiAirShipScript : MonoBehaviour
     void Start()
     {
         currentSpeed = moveSpeed;     // Initialize current speed
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Check if the collided object has the tag "Bullet"
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            // Optionally, you can retrieve the damage from the bullet if it has a script with a damage property
+            BulletScript bullet = collision.gameObject.GetComponent<BulletScript>();
+            if (bullet != null)
+            {
+                // Take damage based on the bullet's damage value
+                TakeDamage(bullet.GetBulletDamage());
+            }
+
+            // Destroy the bullet after it hits the gunboat
+            Destroy(collision.gameObject);
+        }
     }
 
     void Update()
@@ -48,7 +64,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
             currentSpeed = moveSpeed;
         }
 
-        // Move the enemy ship with the current speed
+        // Move the enemy ship to the left with the current speed
         Move(currentSpeed);
 
         if (health <= 0)
@@ -59,25 +75,8 @@ public class EnemyAntiAirShipScript : MonoBehaviour
 
     void Move(float speed)
     {
-        // Move in the current direction
-        if (movingRight)
-        {
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(Vector2.left * speed * Time.deltaTime);
-        }
-
-        // Switch direction after reaching a certain boundary
-        if (transform.position.x >= 10f)
-        {
-            movingRight = false;
-        }
-        else if (transform.position.x <= -10f)
-        {
-            movingRight = true;
-        }
+        // Always move to the left
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
     }
 
     void Shoot()
@@ -88,7 +87,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.linearVelocity = firePoint.right * bulletSpeed;
+                rb.linearVelocity = firePoint.right; // Set velocity based on direction without speed multiplier
             }
         }
         else
