@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6071279899342323984}
   - component: {fileID: 8462894774189420419}
   - component: {fileID: -214821376420616365}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: enemy gunboat
   m_TagString: Enemy
   m_Icon: {fileID: 0}

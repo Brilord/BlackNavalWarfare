@@ -5,7 +5,7 @@ public class MissileScript : MonoBehaviour
     public float speed = 10f;                    // Speed of the missile
     public float rotationSpeed = 200f;           // Rotation speed for homing behavior
     public float lifetime = 5f;                  // How long before the missile self-destructs
-    public int impactDamage = 100;               // Fixed damage dealt on impact
+    public int impactDamage = 20;               // Fixed damage dealt on impact
     public float soarTime = 0.2f;                // Time in seconds to soar upwards before homing
     public float stoppingDistance = 0.5f;        // Distance at which the missile stops rotating toward the target
     private float lifetimeTimer;
@@ -112,7 +112,7 @@ public class MissileScript : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public float GetMissileDamage()
+    public int GetMissileDamage()
     {
         return impactDamage;
     }

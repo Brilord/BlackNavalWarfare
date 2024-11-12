@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -6219441832325311429}
   - component: {fileID: 7237515934757006089}
   - component: {fileID: -7570907349657298166}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: enemy frigate
   m_TagString: Enemy
   m_Icon: {fileID: 0}

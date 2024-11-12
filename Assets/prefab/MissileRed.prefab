@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6825563991944342879}
   - component: {fileID: 3390356769321300845}
+  - component: {fileID: -7348979380206839802}
   m_Layer: 0
   m_Name: MissileRed
-  m_TagString: Untagged
+  m_TagString: EnemyMissile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87,3 +88,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-7348979380206839802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7181254877710038919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46ca9bf6225f190409f7c3a3be0dfa80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5898827706921497384}
   - component: {fileID: 1138481206877335396}
   - component: {fileID: -4813113689433274269}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: enemy speedship
   m_TagString: Enemy
   m_Icon: {fileID: 0}

@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 3792018617579101736}
   - component: {fileID: 4217293349922419526}
   - component: {fileID: -8724995577320390596}
+  - component: {fileID: 9108701070470698686}
   m_Layer: 0
   m_Name: Missile
-  m_TagString: Bullet
+  m_TagString: Missile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134,3 +135,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.75, y: 0.14}
   m_EdgeRadius: 0
+--- !u!114 &9108701070470698686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975807724040017955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00140c321fb804e4895c7deff48ffc8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
+  rotationSpeed: 200
+  lifetime: 5
+  impactDamage: 100
+  soarTime: 0.2
+  stoppingDistance: 0.5
