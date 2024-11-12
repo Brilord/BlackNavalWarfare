@@ -42,6 +42,13 @@ public class BulletScript : MonoBehaviour
             enemy.TakeDamage(bulletDamage);
             Debug.Log("Bullet hit an EnemyShip and dealt " + bulletDamage + " damage.");
         }
+        EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
+        if (enemyBase != null)
+        {
+            // Apply damage to the enemy base
+            enemyBase.TakeDamage(bulletDamage);
+            Debug.Log("Bullet hit an EnemyBase and dealt " + bulletDamage + " damage.");
+        }
 
         // Check if the bullet hit an enemy gunboat
         EnemyGunboatScript gunboat = collision.gameObject.GetComponent<EnemyGunboatScript>();

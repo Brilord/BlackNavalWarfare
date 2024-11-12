@@ -10,34 +10,25 @@ public class EnemyBaseScript : MonoBehaviour
     public float maxHP = 20000f;
     public float healthRegenRate = 5f;
     public float regenInterval = 1f;
-    public float resourceGenerationRate = 10f; // New field for resource generation rate
-    public float upgradeInterval = 30f; // Interval for upgrading base stats
+    public float resourceGenerationRate = 10f;
+    public float upgradeInterval = 30f;
 
     private BoxCollider2D baseCollider;
     public TextMeshProUGUI healthText;
     public GameObject destructionPopup;
     public GameObject retryButton;
     public GameObject quitButton;
-    public GameObject[] unitPrefabs;
-    public int[] unitCosts;
+    public GameObject[] unitPrefabs;   // Array of unit prefabs
     public float spawnInterval = 5f;
     public float resources = 100f;
 
     void Start()
     {
-        baseCollider = GetComponent<BoxCollider2D>();
-        if (baseCollider == null)
-        {
-            Debug.Log("Collider2D not found, adding BoxCollider2D to the enemy base.");
-            baseCollider = gameObject.AddComponent<BoxCollider2D>();
-            baseCollider.isTrigger = true;
-        }
-
+        // Initialize UI elements, start coroutines, etc.
         if (healthText == null)
         {
             Debug.LogError("Health Text UI not assigned. Please assign it in the Inspector.");
         }
-
         if (destructionPopup == null)
         {
             Debug.LogError("Destruction Popup UI not assigned. Please assign it in the Inspector.");
@@ -46,12 +37,10 @@ public class EnemyBaseScript : MonoBehaviour
         {
             destructionPopup.SetActive(false);
         }
-
         if (retryButton != null)
         {
             retryButton.GetComponent<Button>().onClick.AddListener(RestartGame);
         }
-
         if (quitButton != null)
         {
             quitButton.GetComponent<Button>().onClick.AddListener(QuitToMainMenu);
@@ -59,8 +48,8 @@ public class EnemyBaseScript : MonoBehaviour
 
         StartCoroutine(RegenerateHealth());
         StartCoroutine(SpawnEnemies());
-        StartCoroutine(GenerateResources()); // Start resource generation
-        StartCoroutine(UpgradeOverTime());   // Start upgrades over time
+        StartCoroutine(GenerateResources());
+        StartCoroutine(UpgradeOverTime());
     }
 
     void Update()
@@ -92,10 +81,10 @@ public class EnemyBaseScript : MonoBehaviour
     private int SelectRandomUnitToSpawn()
     {
         // Get list of affordable units
-        System.Collections.Generic.List<int> affordableUnits = new System.Collections.Generic.List<int>();
+        var affordableUnits = new System.Collections.Generic.List<int>();
         for (int i = 0; i < unitPrefabs.Length; i++)
         {
-            if (CanAfford(unitCosts[i]))
+            if (CanAfford(GetUnitCost(unitPrefabs[i])))
             {
                 affordableUnits.Add(i);
             }
@@ -114,7 +103,9 @@ public class EnemyBaseScript : MonoBehaviour
     {
         if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
         {
-            int unitCost = unitCosts[unitIndex];
+            GameObject unitPrefab = unitPrefabs[unitIndex];
+            int unitCost = GetUnitCost(unitPrefab);
+            
             if (CanAfford(unitCost))
             {
                 resources -= unitCost;
@@ -122,19 +113,25 @@ public class EnemyBaseScript : MonoBehaviour
 
                 Vector3 spawnPosition = transform.position;
                 spawnPosition.y = -3.4f;
-                Debug.Log($"Spawning {unitPrefabs[unitIndex].name} at {spawnPosition}. Cost: {unitCost} resources. Remaining: {resources}");
+                Debug.Log($"Spawning {unitPrefab.name} at {spawnPosition}. Cost: {unitCost} resources. Remaining: {resources}");
 
-                Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
+                Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
             }
             else
             {
-                Debug.LogWarning($"Not enough resources to spawn {unitPrefabs[unitIndex].name}. Required: {unitCost}, Available: {resources}");
+                Debug.LogWarning($"Not enough resources to spawn {unitPrefab.name}. Required: {unitCost}, Available: {resources}");
             }
         }
         else
         {
             Debug.LogWarning("Invalid unit index selected. Check unitPrefabs array.");
         }
+    }
+
+    private int GetUnitCost(GameObject unitPrefab)
+    {
+        var unitScript = unitPrefab.GetComponent<EnemyGunboatScript>();
+        return unitScript != null ? unitScript.cost : 0;
     }
 
     private bool CanAfford(int cost)
@@ -151,7 +148,7 @@ public class EnemyBaseScript : MonoBehaviour
     {
         while (baseHP > 0)
         {
-            yield return new WaitForSeconds(1f); // Generate resources every second
+            yield return new WaitForSeconds(1f);
             resources += resourceGenerationRate;
             TriggerResourceChanged();
         }
@@ -163,9 +160,8 @@ public class EnemyBaseScript : MonoBehaviour
         {
             yield return new WaitForSeconds(upgradeInterval);
 
-            // Increase health regeneration rate and resource generation rate as upgrades
-            healthRegenRate += 2f;          // Increase health regen
-            resourceGenerationRate += 5f;    // Increase resource generation
+            healthRegenRate += 2f;
+            resourceGenerationRate += 5f;
 
             Debug.Log("Base upgraded! New Health Regen Rate: " + healthRegenRate + ", New Resource Generation Rate: " + resourceGenerationRate);
         }
@@ -176,7 +172,7 @@ public class EnemyBaseScript : MonoBehaviour
         SceneManager.LoadScene("StageSelector");
     }
 
-    public void ApplyDamage(float damageAmount)
+    public void TakeDamage(float damageAmount)
     {
         baseHP -= damageAmount;
         UpdateHealthText();
@@ -210,33 +206,6 @@ public class EnemyBaseScript : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-{
-    // Check if the collided object is tagged as "Bullet"
-    if (collision.CompareTag("Bullet"))
-    {
-        BulletScript bullet = collision.GetComponent<BulletScript>();
-        if (bullet != null)
-        {
-            ApplyDamage(bullet.GetBulletDamage());
-            Destroy(collision.gameObject);
-            return;
-        }
-    }
-
-    // Check if the collided object is a missile
-    MissileScript missile = collision.GetComponent<MissileScript>();
-    if (missile != null)
-    {
-        Debug.Log("Missile collision with enemy base");
-        ApplyDamage(missile.GetMissileDamage());
-        Destroy(collision.gameObject);
-        return;
-    }
-}
-
-    
-
     private void UpdateHealthText()
     {
         if (healthText != null)
@@ -245,11 +214,44 @@ public class EnemyBaseScript : MonoBehaviour
         }
     }
 
-    // New method for gunboat to check if this is an enemy
     public bool IsEnemy()
     {
-        return true; // This object is an enemy base
+        return true;
     }
+    void OnTriggerEnter2D(Collider2D collision)
+{
+    if (collision.CompareTag("Bullet"))
+    {
+        BulletScript bullet = collision.GetComponent<BulletScript>();
+        if (bullet != null)
+        {
+            int bulletDamage = bullet.GetBulletDamage();
+            TakeDamage(bulletDamage);
+            Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
+        }
+    }
+    else if (collision.CompareTag("Missile"))
+    {
+        MissileScript missile = collision.GetComponent<MissileScript>();
+        if (missile != null)
+        {
+            int missileDamage = missile.GetMissileDamage();
+            TakeDamage(missileDamage);
+            Debug.Log("Took damage from Missile with damage: " + missileDamage);
+        }
+    }
+    else if (collision.CompareTag("LargeBullet"))
+    {
+        LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+        if (largeBullet != null)
+        {
+            int largeBulletDamage = largeBullet.GetBulletDamage();
+            TakeDamage(largeBulletDamage);
+            Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
+        }
+    }
+    
+    // Destroy the projectile after collision
+    Destroy(collision.gameObject);
 }
-
-
+}

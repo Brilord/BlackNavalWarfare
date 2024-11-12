@@ -102,13 +102,50 @@ public class MissileScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        // Check if the large bullet hit an enemy ship
         EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
         if (enemy != null)
         {
-            enemy.TakeDamage(impactDamage); // Deal fixed impact damage to the enemy
+            // Apply damage to the enemy
+            enemy.TakeDamage(impactDamage);
+            Debug.Log("Large Bullet hit an EnemyShip and dealt " + impactDamage + " damage.");
+        }
+        EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
+        if (enemyBase != null)
+        {
+            // Apply damage to the enemy base
+            enemyBase.TakeDamage(impactDamage);
+            Debug.Log("Large Bullet hit an EnemyBase and dealt " +  impactDamage+ " damage.");
         }
 
-        // Destroy the missile after impact
+        // Check if the large bullet hit an enemy gunboat
+        EnemyGunboatScript gunboat = collision.gameObject.GetComponent<EnemyGunboatScript>();
+        if (gunboat != null)
+        {
+            // Apply damage to the enemy gunboat
+            gunboat.TakeDamage(impactDamage);
+            Debug.Log("Large Bullet hit an EnemyGunboat and dealt " +impactDamage + " damage.");
+        }
+
+        // Check if the large bullet hit an enemy cruiser
+        EnemyCruiserScript cruiser = collision.gameObject.GetComponent<EnemyCruiserScript>();
+        if (cruiser != null)
+        {
+            // Apply damage to the enemy cruiser
+            cruiser.TakeDamage(impactDamage);
+            Debug.Log("Large Bullet hit an EnemyCruiser and dealt " + impactDamage + " damage.");
+        }
+
+        // Check if the large bullet hit an enemy anti-air ship
+        EnemyAntiAirShipScript antiAirShip = collision.gameObject.GetComponent<EnemyAntiAirShipScript>();
+        if (antiAirShip != null)
+        {
+            // Apply damage to the enemy anti-air ship
+            antiAirShip.TakeDamage(impactDamage);
+            Debug.Log("Large Bullet hit an EnemyAntiAirShip and dealt " + impactDamage + " damage.");
+        }
+
+        // Destroy the large bullet instance after it hits something
         Destroy(gameObject);
     }
 
