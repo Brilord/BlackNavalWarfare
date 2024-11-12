@@ -18,8 +18,9 @@ public class EnemyBaseScript : MonoBehaviour
     public GameObject destructionPopup;
     public GameObject retryButton;
     public GameObject quitButton;
-    public GameObject[] unitPrefabs;   // Array of unit prefabs
-    public float spawnInterval = 5f;
+    public GameObject[] unitPrefabs; // Array of unit prefabs
+    public GameObject[] spawnablePrefabs; // Array of generic spawnable prefabs
+    public float spawnInterval = 0.2f;
     public float resources = 100f;
 
     void Start()
@@ -50,6 +51,7 @@ public class EnemyBaseScript : MonoBehaviour
         StartCoroutine(SpawnEnemies());
         StartCoroutine(GenerateResources());
         StartCoroutine(UpgradeOverTime());
+        StartCoroutine(SpawnPrefabsAtInterval());
     }
 
     void Update()
@@ -218,40 +220,66 @@ public class EnemyBaseScript : MonoBehaviour
     {
         return true;
     }
+
     void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bullet"))
+        {
+            BulletScript bullet = collision.GetComponent<BulletScript>();
+            if (bullet != null)
+            {
+                int bulletDamage = bullet.GetBulletDamage();
+                TakeDamage(bulletDamage);
+                Destroy(collision.gameObject);
+                Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
+            }
+        }
+        else if (collision.CompareTag("Missile"))
+        {
+            MissileScript missile = collision.GetComponent<MissileScript>();
+            if (missile != null)
+            {
+                int missileDamage = missile.GetMissileDamage();
+                TakeDamage(missileDamage);
+                Destroy(collision.gameObject);
+                Debug.Log("Took damage from Missile with damage: " + missileDamage);
+            }
+        }
+        else if (collision.CompareTag("LargeBullet"))
+        {
+            LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+            if (largeBullet != null)
+            {
+                int largeBulletDamage = largeBullet.GetBulletDamage();
+                TakeDamage(largeBulletDamage);
+                Destroy(collision.gameObject);
+                Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
+            }
+        }
+        
+        // Destroy the projectile after collision
+    }
+
+    // New coroutine to spawn generic prefabs at intervals
+    private IEnumerator SpawnPrefabsAtInterval()
+    {
+        while (baseHP > 0)
+        {
+            yield return new WaitForSeconds(spawnInterval);
+            foreach (var prefab in spawnablePrefabs)
+            {
+                SpawnPrefab(prefab);
+            }
+        }
+    }
+
+    private void SpawnPrefab(GameObject prefab)
 {
-    if (collision.CompareTag("Bullet"))
-    {
-        BulletScript bullet = collision.GetComponent<BulletScript>();
-        if (bullet != null)
-        {
-            int bulletDamage = bullet.GetBulletDamage();
-            TakeDamage(bulletDamage);
-            Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-        }
-    }
-    else if (collision.CompareTag("Missile"))
-    {
-        MissileScript missile = collision.GetComponent<MissileScript>();
-        if (missile != null)
-        {
-            int missileDamage = missile.GetMissileDamage();
-            TakeDamage(missileDamage);
-            Debug.Log("Took damage from Missile with damage: " + missileDamage);
-        }
-    }
-    else if (collision.CompareTag("LargeBullet"))
-    {
-        LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-        if (largeBullet != null)
-        {
-            int largeBulletDamage = largeBullet.GetBulletDamage();
-            TakeDamage(largeBulletDamage);
-            Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-        }
-    }
-    
-    // Destroy the projectile after collision
-    Destroy(collision.gameObject);
+    Vector3 spawnPosition = transform.position;
+    spawnPosition.y = -3.4f; // Fixed Y position at -3.4f
+
+    Instantiate(prefab, spawnPosition, Quaternion.identity);
+    Debug.Log($"Spawned {prefab.name} at {spawnPosition}");
 }
+
 }

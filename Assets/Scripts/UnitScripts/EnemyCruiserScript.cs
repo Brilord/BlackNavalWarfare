@@ -171,7 +171,7 @@ public class EnemyCruiserScript : MonoBehaviour
     }
     
     // Destroy the projectile after collision
-    Destroy(collision.gameObject);
+    //Destroy(collision.gameObject);
 }
 
 

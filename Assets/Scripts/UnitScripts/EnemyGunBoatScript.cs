@@ -108,7 +108,7 @@ public class EnemyGunboatScript : MonoBehaviour
     }
     
     // Destroy the projectile after collision
-    Destroy(collision.gameObject);
+    //Destroy(collision.gameObject);
 }
 
 
