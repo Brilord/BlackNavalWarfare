@@ -2028,6 +2028,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 519420032}
+  backgroundMusic:
+  - {fileID: 8300000, guid: 42e0b27447bad214ebc38cac62c58965, type: 3}
+  - {fileID: 8300000, guid: d78e4b3fd05798942a55cd499d409285, type: 3}
 --- !u!1 &752304008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4918,7 +4921,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.23051345, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -4928,7 +4931,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 6.99, y: 9.95}
+  m_Size: {x: 6.672512, y: 9.95}
   m_EdgeRadius: 0
 --- !u!1 &2013807278
 GameObject:

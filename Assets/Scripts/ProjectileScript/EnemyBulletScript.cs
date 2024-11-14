@@ -6,17 +6,26 @@ public class EnemyBulletScript : MonoBehaviour
     private int bulletDamage = 1;       // Damage dealt by the enemy bullet
 
     [SerializeField]
-    private float bulletSpeed = 10f;     // Speed at which the enemy bullet travels
+    private float bulletSpeed = 10f;    // Speed at which the enemy bullet travels
 
     [SerializeField]
-    private float maxRange = 20f;        // Maximum range of the enemy bullet
+    private float maxRange = 20f;       // Maximum range of the enemy bullet
 
-    private Vector2 startPosition;       // The position where the enemy bullet was instantiated
+    [SerializeField]
+    private AudioClip bulletSpawnSound; // Sound to play when the bullet is spawned
+
+    private Vector2 startPosition;      // The position where the enemy bullet was instantiated
 
     void Start()
     {
         // Store the initial position of the bullet
         startPosition = transform.position;
+
+        // Play the bullet spawn sound
+        if (bulletSpawnSound != null)
+        {
+            AudioSource.PlayClipAtPoint(bulletSpawnSound, transform.position);
+        }
     }
 
     void Update()
@@ -57,25 +66,30 @@ public class EnemyBulletScript : MonoBehaviour
             // Apply damage to the base
             baseScript.TakeDamage(bulletDamage);
         }
+
+        // Check if the bullet hit the cruiser
         CruiserScript cruiser = collision.gameObject.GetComponent<CruiserScript>();
         if (cruiser != null)
         {
             // Apply damage to the cruiser
             cruiser.TakeDamage(bulletDamage);
         }
+
+        // Check if the bullet hit the small anti-air ship
         SmallAntiAirShip smallAntiAirShip = collision.gameObject.GetComponent<SmallAntiAirShip>();
         if (smallAntiAirShip != null)
         {
             // Apply damage to the small anti-air ship
             smallAntiAirShip.TakeDamage(bulletDamage);
         }
+
+        // Check if the bullet hit the battleship
         BattleShipScript battleShip = collision.gameObject.GetComponent<BattleShipScript>();
         if (battleShip != null)
         {
             // Apply damage to the battleship
             battleShip.TakeDamage(bulletDamage);
         }
-        
 
         // Destroy the bullet instance after it hits something
         Destroy(gameObject);

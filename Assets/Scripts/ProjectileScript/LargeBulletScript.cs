@@ -3,7 +3,7 @@ using UnityEngine;
 public class LargeBulletScript : MonoBehaviour
 {
     [SerializeField]
-    private int bulletDamage = 40;      // Increased damage dealt by the large bullet
+    private int largeBulletDamage = 10;      // Increased damage dealt by the large bullet
 
     [SerializeField]
     private float bulletSpeed = 10f;    // Speed at which the large bullet travels
@@ -39,15 +39,13 @@ public class LargeBulletScript : MonoBehaviour
         if (enemy != null)
         {
             // Apply damage to the enemy
-            enemy.TakeDamage(bulletDamage);
-            Debug.Log("Large Bullet hit an EnemyShip and dealt " + bulletDamage + " damage.");
+            enemy.TakeDamage(largeBulletDamage);
         }
         EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
         if (enemyBase != null)
         {
             // Apply damage to the enemy base
-            enemyBase.TakeDamage(bulletDamage);
-            Debug.Log("Large Bullet hit an EnemyBase and dealt " + bulletDamage + " damage.");
+            enemyBase.TakeDamage(largeBulletDamage);
         }
 
         // Check if the large bullet hit an enemy gunboat
@@ -55,8 +53,7 @@ public class LargeBulletScript : MonoBehaviour
         if (gunboat != null)
         {
             // Apply damage to the enemy gunboat
-            gunboat.TakeDamage(bulletDamage);
-            Debug.Log("Large Bullet hit an EnemyGunboat and dealt " + bulletDamage + " damage.");
+            gunboat.TakeDamage(largeBulletDamage);
         }
 
         // Check if the large bullet hit an enemy cruiser
@@ -64,8 +61,7 @@ public class LargeBulletScript : MonoBehaviour
         if (cruiser != null)
         {
             // Apply damage to the enemy cruiser
-            cruiser.TakeDamage(bulletDamage);
-            Debug.Log("Large Bullet hit an EnemyCruiser and dealt " + bulletDamage + " damage.");
+            cruiser.TakeDamage(largeBulletDamage);
         }
 
         // Check if the large bullet hit an enemy anti-air ship
@@ -73,8 +69,13 @@ public class LargeBulletScript : MonoBehaviour
         if (antiAirShip != null)
         {
             // Apply damage to the enemy anti-air ship
-            antiAirShip.TakeDamage(bulletDamage);
-            Debug.Log("Large Bullet hit an EnemyAntiAirShip and dealt " + bulletDamage + " damage.");
+            antiAirShip.TakeDamage(largeBulletDamage);
+        }
+        EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
+        if (battleShip != null)
+        {
+            // Apply damage to the battleship
+            battleShip.TakeDamage(largeBulletDamage);
         }
 
         // Destroy the large bullet instance after it hits something
@@ -84,7 +85,7 @@ public class LargeBulletScript : MonoBehaviour
     // Public method to get the large bullet's damage value
     public int GetBulletDamage()
     {
-        return bulletDamage;
+        return largeBulletDamage;
     }
 
     public float GetBulletSpeed()

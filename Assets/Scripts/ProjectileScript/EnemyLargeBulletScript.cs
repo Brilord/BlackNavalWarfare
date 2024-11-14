@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemyLargeBulletScript : MonoBehaviour
 {
     [SerializeField]
-    private int bulletDamage = 5;       // Increased damage dealt by the large enemy bullet
+    private int bulletDamage = 10;       // Increased damage dealt by the large enemy bullet
 
     [SerializeField]
     private float bulletSpeed = 10f;    // Speed at which the large enemy bullet travels
@@ -58,6 +58,7 @@ public class EnemyLargeBulletScript : MonoBehaviour
             baseScript.TakeDamage(bulletDamage);
         }
 
+        // Check if the bullet hit the cruiser
         CruiserScript cruiser = collision.gameObject.GetComponent<CruiserScript>();
         if (cruiser != null)
         {
@@ -65,6 +66,7 @@ public class EnemyLargeBulletScript : MonoBehaviour
             cruiser.TakeDamage(bulletDamage);
         }
 
+        // Check if the bullet hit the small anti-air ship
         SmallAntiAirShip smallAntiAirShip = collision.gameObject.GetComponent<SmallAntiAirShip>();
         if (smallAntiAirShip != null)
         {
@@ -72,6 +74,7 @@ public class EnemyLargeBulletScript : MonoBehaviour
             smallAntiAirShip.TakeDamage(bulletDamage);
         }
 
+        // Check if the bullet hit the battleship
         BattleShipScript battleShip = collision.gameObject.GetComponent<BattleShipScript>();
         if (battleShip != null)
         {

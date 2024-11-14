@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class Background : MonoBehaviour
 {
-    public Transform cameraTransform; // Reference to the camera
-    private Vector2 minBounds;        // Minimum bounds of the background
-    private Vector2 maxBounds;        // Maximum bounds of the background
-    private float camHalfHeight;      // Half height of the camera
-    private float camHalfWidth;       // Half width of the camera
+    public Transform cameraTransform;     // Reference to the camera
+    private Vector2 minBounds;            // Minimum bounds of the background
+    private Vector2 maxBounds;            // Maximum bounds of the background
+    private float camHalfHeight;          // Half height of the camera
+    private float camHalfWidth;           // Half width of the camera
+    public AudioClip[] backgroundMusic;   // Array of background music clips
+    private AudioSource audioSource;      // Reference to the AudioSource
+    private int currentClipIndex = 0;     // Track the current clip index
 
     void Start()
     {
@@ -22,6 +25,13 @@ public class Background : MonoBehaviour
         Camera cam = Camera.main;
         camHalfHeight = cam.orthographicSize;
         camHalfWidth = camHalfHeight * cam.aspect; // Aspect ratio adjustment
+
+        // Get the AudioSource component and set up the background music
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.loop = false; // Disable looping for individual clips
+        audioSource.playOnAwake = false; // Don't play automatically on start
+
+        PlayNextClip(); // Start playing the first clip
     }
 
     void LateUpdate()
@@ -37,5 +47,23 @@ public class Background : MonoBehaviour
 
         // Set the camera's position to the clamped values
         cameraTransform.position = newPosition;
+
+        // Check if the current clip has finished playing
+        if (!audioSource.isPlaying)
+        {
+            PlayNextClip(); // Play the next clip
+        }
+    }
+
+    void PlayNextClip()
+    {
+        if (backgroundMusic.Length == 0) return; // No clips available
+
+        // Play the current clip in the array
+        audioSource.clip = backgroundMusic[currentClipIndex];
+        audioSource.Play();
+
+        // Move to the next clip index, looping back to the start if necessary
+        currentClipIndex = (currentClipIndex + 1) % backgroundMusic.Length;
     }
 }

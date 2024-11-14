@@ -217,6 +217,7 @@ public class BaseScript : MonoBehaviour
     {
         Debug.Log("Base destroyed!");
     }
+    
 
     private void TriggerResourceChanged()
     {

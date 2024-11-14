@@ -76,25 +76,8 @@ public class EnemyBattleShipScript : MonoBehaviour
 
     void Move(float speed)
     {
-        if (movingRight)
-        {
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(Vector2.left * speed * Time.deltaTime);
-        }
-
-        if (transform.position.x >= 10f && movingRight)
-        {
-            movingRight = false;
-            Flip();
-        }
-        else if (transform.position.x <= -10f && !movingRight)
-        {
-            movingRight = true;
-            Flip();
-        }
+        // Always move to the left
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
     }
 
     void Flip()
@@ -195,7 +178,7 @@ public class EnemyBattleShipScript : MonoBehaviour
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, detectionRange);
         foreach (var hit in hits)
         {
-            if (hit.CompareTag("Player"))
+            if (hit.CompareTag("Friendly"))
             {
                 targetPlayer = hit.gameObject;
                 break;

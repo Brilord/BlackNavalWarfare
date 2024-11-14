@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class MissileScript : MonoBehaviour
 {
-    public float speed = 10f;                    // Speed of the missile
-    public float rotationSpeed = 200f;           // Rotation speed for homing behavior
+    public float speed = 3f;                    // Speed of the missile
+    public float rotationSpeed = 400f;           // Rotation speed for homing behavior
     public float lifetime = 5f;                  // How long before the missile self-destructs
     public int impactDamage = 20;               // Fixed damage dealt on impact
     public float soarTime = 0.2f;                // Time in seconds to soar upwards before homing
@@ -11,13 +11,19 @@ public class MissileScript : MonoBehaviour
     private float lifetimeTimer;
     private float soarTimer;
     private Transform target;                    // Variable to store the closest target
-    private bool isHoming;                       // Flag to check if missile is homing towards target
+    private bool isHoming;    
+    [SerializeField]
+    private AudioClip missileSpawnSound;                   // Flag to check if missile is homing towards target
 
     void Start()
     {
         lifetimeTimer = lifetime;
         soarTimer = soarTime;
-        isHoming = false;                        // Start with soaring behavior
+        isHoming = false; 
+        if (missileSpawnSound != null)
+        {
+            AudioSource.PlayClipAtPoint(missileSpawnSound, transform.position);
+        }       // Start with soaring behavior
         FaceUpwards();                           // Ensure the missile initially faces upwards
     }
 
@@ -108,14 +114,12 @@ public class MissileScript : MonoBehaviour
         {
             // Apply damage to the enemy
             enemy.TakeDamage(impactDamage);
-            Debug.Log("Large Bullet hit an EnemyShip and dealt " + impactDamage + " damage.");
         }
         EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
         if (enemyBase != null)
         {
             // Apply damage to the enemy base
             enemyBase.TakeDamage(impactDamage);
-            Debug.Log("Large Bullet hit an EnemyBase and dealt " +  impactDamage+ " damage.");
         }
 
         // Check if the large bullet hit an enemy gunboat
@@ -124,7 +128,6 @@ public class MissileScript : MonoBehaviour
         {
             // Apply damage to the enemy gunboat
             gunboat.TakeDamage(impactDamage);
-            Debug.Log("Large Bullet hit an EnemyGunboat and dealt " +impactDamage + " damage.");
         }
 
         // Check if the large bullet hit an enemy cruiser
@@ -133,7 +136,6 @@ public class MissileScript : MonoBehaviour
         {
             // Apply damage to the enemy cruiser
             cruiser.TakeDamage(impactDamage);
-            Debug.Log("Large Bullet hit an EnemyCruiser and dealt " + impactDamage + " damage.");
         }
 
         // Check if the large bullet hit an enemy anti-air ship
@@ -142,7 +144,12 @@ public class MissileScript : MonoBehaviour
         {
             // Apply damage to the enemy anti-air ship
             antiAirShip.TakeDamage(impactDamage);
-            Debug.Log("Large Bullet hit an EnemyAntiAirShip and dealt " + impactDamage + " damage.");
+        }
+        EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
+        if (battleShip != null)
+        {
+            // Apply damage to the battleship
+            battleShip.TakeDamage(impactDamage);
         }
 
         // Destroy the large bullet instance after it hits something

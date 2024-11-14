@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7792856194547619622}
   - component: {fileID: 1524219422537105696}
   - component: {fileID: 4599429772561792379}
+  - component: {fileID: -2636037813078036280}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -104,6 +105,7 @@ MonoBehaviour:
   bulletDamage: 1
   bulletSpeed: 10
   maxRange: 20
+  bulletSpawnSound: {fileID: 8300000, guid: 3757e4c6e3f31864aa1ab5b2e49817a9, type: 3}
 --- !u!61 &4599429772561792379
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -134,7 +136,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -150,3 +152,30 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.28150088, y: 0.08771698}
   m_EdgeRadius: 0
+--- !u!50 &-2636037813078036280
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8823610343006163288}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7

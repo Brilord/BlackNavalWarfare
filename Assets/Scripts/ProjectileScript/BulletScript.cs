@@ -11,12 +11,21 @@ public class BulletScript : MonoBehaviour
     [SerializeField]
     private float maxRange = 20f;       // Maximum range of the bullet
 
+    [SerializeField]
+    private AudioClip bulletSpawnSound; // Sound to play when the bullet is spawned
+
     private Vector2 startPosition;      // The position where the bullet was instantiated
 
     void Start()
     {
         // Store the initial position of the bullet
         startPosition = transform.position;
+
+        // Play the bullet spawn sound
+        if (bulletSpawnSound != null)
+        {
+            AudioSource.PlayClipAtPoint(bulletSpawnSound, transform.position);
+        }
     }
 
     void Update()
@@ -75,6 +84,13 @@ public class BulletScript : MonoBehaviour
             // Apply damage to the enemy anti-air ship
             antiAirShip.TakeDamage(bulletDamage);
             Debug.Log("Bullet hit an EnemyAntiAirShip and dealt " + bulletDamage + " damage.");
+        }
+        EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
+        if (battleShip != null)
+        {
+            // Apply damage to the battleship
+            battleShip.TakeDamage(bulletDamage);
+            Debug.Log("Bullet hit an EnemyBattleShip and dealt " + bulletDamage + " damage.");
         }
 
         // Destroy the bullet instance after it hits something
