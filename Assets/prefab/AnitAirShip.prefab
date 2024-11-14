@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -8490271699386541103}
   - component: {fileID: 8041188438218149644}
   - component: {fileID: -5335107305981587232}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AnitAirShip
   m_TagString: Friendly
   m_Icon: {fileID: 0}

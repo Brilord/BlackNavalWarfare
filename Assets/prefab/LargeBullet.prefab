@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7767010148327626053}
   - component: {fileID: -5243878762334582918}
   - component: {fileID: 922919940126084863}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LargeBullet
   m_TagString: LargeBullet
   m_Icon: {fileID: 0}
@@ -151,6 +151,7 @@ MonoBehaviour:
   largeBulletDamage: 10
   bulletSpeed: 10
   maxRange: 20
+  spawnSound: {fileID: 8300000, guid: eb4bc50dac2af584bb37419998117b1b, type: 3}
 --- !u!50 &922919940126084863
 Rigidbody2D:
   serializedVersion: 5

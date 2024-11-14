@@ -6,17 +6,34 @@ public class LargeBulletScript : MonoBehaviour
     private int largeBulletDamage = 10;      // Increased damage dealt by the large bullet
 
     [SerializeField]
-    private float bulletSpeed = 10f;    // Speed at which the large bullet travels
+    private float bulletSpeed = 10f;         // Speed at which the large bullet travels
 
     [SerializeField]
-    private float maxRange = 20f;       // Maximum range of the large bullet
+    private float maxRange = 20f;            // Maximum range of the large bullet
 
-    private Vector2 startPosition;      // The position where the large bullet was instantiated
+    [SerializeField]
+    private AudioClip spawnSound;            // Sound effect for when the bullet is spawned
+
+    private AudioSource audioSource;         // AudioSource component for playing the sound
+
+    private Vector2 startPosition;           // The position where the large bullet was instantiated
 
     void Start()
     {
         // Store the initial position of the large bullet
         startPosition = transform.position;
+
+        // Get or add an AudioSource component to play the spawn sound
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // Set the audio clip to the spawn sound and play it
+        audioSource.clip = spawnSound;
+        audioSource.playOnAwake = false;
+        audioSource.Play();
     }
 
     void Update()
@@ -34,47 +51,41 @@ public class LargeBulletScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the large bullet hit an enemy ship
+        // Check if the large bullet hit an enemy and apply damage
         EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
         if (enemy != null)
         {
-            // Apply damage to the enemy
             enemy.TakeDamage(largeBulletDamage);
         }
+
+        // Apply damage to other enemy types
         EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
         if (enemyBase != null)
         {
-            // Apply damage to the enemy base
             enemyBase.TakeDamage(largeBulletDamage);
         }
 
-        // Check if the large bullet hit an enemy gunboat
         EnemyGunboatScript gunboat = collision.gameObject.GetComponent<EnemyGunboatScript>();
         if (gunboat != null)
         {
-            // Apply damage to the enemy gunboat
             gunboat.TakeDamage(largeBulletDamage);
         }
 
-        // Check if the large bullet hit an enemy cruiser
         EnemyCruiserScript cruiser = collision.gameObject.GetComponent<EnemyCruiserScript>();
         if (cruiser != null)
         {
-            // Apply damage to the enemy cruiser
             cruiser.TakeDamage(largeBulletDamage);
         }
 
-        // Check if the large bullet hit an enemy anti-air ship
         EnemyAntiAirShipScript antiAirShip = collision.gameObject.GetComponent<EnemyAntiAirShipScript>();
         if (antiAirShip != null)
         {
-            // Apply damage to the enemy anti-air ship
             antiAirShip.TakeDamage(largeBulletDamage);
         }
+
         EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
         if (battleShip != null)
         {
-            // Apply damage to the battleship
             battleShip.TakeDamage(largeBulletDamage);
         }
 

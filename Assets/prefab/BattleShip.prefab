@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2658174996838300060}
   - component: {fileID: 4598949099412016165}
   - component: {fileID: 6758501702048969084}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BattleShip
   m_TagString: Friendly
   m_Icon: {fileID: 0}

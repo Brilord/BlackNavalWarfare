@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -388340808995840618}
   - component: {fileID: 7847182850128633411}
   - component: {fileID: -8222072559376426569}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cruiser
   m_TagString: Friendly
   m_Icon: {fileID: 0}

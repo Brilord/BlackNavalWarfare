@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 53068620}
   - component: {fileID: 53068619}
   - component: {fileID: 53068618}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyBase
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -4759,7 +4759,7 @@ GameObject:
   - component: {fileID: 1998885933}
   - component: {fileID: 1998885935}
   - component: {fileID: 1998885934}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PlayerBase
   m_TagString: Friendly
   m_Icon: {fileID: 0}

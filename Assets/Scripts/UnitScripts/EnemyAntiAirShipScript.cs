@@ -59,7 +59,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
 
     void Move(float speed)
     {
-        // Always move to the left
+       
         transform.Translate(Vector2.left * speed * Time.deltaTime);
     }
 

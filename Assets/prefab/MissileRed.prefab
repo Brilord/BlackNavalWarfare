@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -7348979380206839802}
   - component: {fileID: -8788854177483201866}
   - component: {fileID: -280444858497918788}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MissileRed
   m_TagString: EnemyBullet
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -4}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
