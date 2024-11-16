@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement; // Include SceneManagement for scene loading
 using System;
 using System.Collections;
 
@@ -11,36 +12,95 @@ public class BaseScript : MonoBehaviour
     public int resources = 100;
     public int maxResourceCapacity = 800;
     public int resourceGenerationRate = 20;
-
-     public int healthRegenRate = 5; // Amount of health to regenerate per second
+    public GameObject gameOverPanel;
+    public int healthRegenRate = 5; // Amount of health to regenerate per second
     public TextMeshProUGUI resourceText;
+    public GameObject retryButton;
+    public GameObject quitButton;
 
-    // Define events to notify listeners when resources or health change
     public event Action OnResourceChanged;
     public event Action OnHealthChanged;
-
-    // Define events to notify listeners when resources or health change
-    
 
     private void Start()
     {
         UpdateResourceText();
         StartCoroutine(GenerateResources());
         StartCoroutine(RegenerateHealth());
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("EnemyBullet"))
+
+        if (gameOverPanel != null)
         {
-            // Assuming the bullet has a script with a damage property
-            int damage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
-
-            TakeDamage(damage);
-
-            // Destroy the bullet after collision
-            Destroy(collision.gameObject);
+            gameOverPanel.SetActive(false); // Hide the panel initially
         }
     }
+
+    // private void OnTriggerEnter2D(Collider2D collision)
+    // {
+    //     int damage = 0;
+
+    //     if (collision.CompareTag("EnemyBullet"))
+    //     {
+    //         damage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+    //     }
+    //     else if (collision.CompareTag("EnemyMissile"))
+    //     {
+    //         damage = collision.GetComponent<EnemyMissileScript>().GetMissileDamage();
+    //     }
+    //     else if (collision.CompareTag("EnemyLargeBullet"))
+    //     {
+    //         damage = collision.GetComponent<EnemyLargeBulletScript>().GetBulletDamage();
+    //     }
+
+    //     if (damage > 0)
+    //     {
+    //         TakeDamage(damage);
+    //         Destroy(collision.gameObject);
+    //     }
+    // }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+{
+    // Define layer indices for different enemy projectiles
+    int enemyBulletLayer = LayerMask.NameToLayer("EnemyBullet");
+    int enemyMissileLayer = LayerMask.NameToLayer("EnemyMissile");
+    int enemyLargeBulletLayer = LayerMask.NameToLayer("EnemyLargeBullet");
+
+    int damage = 0;
+
+    // Check for each layer and apply damage accordingly
+    if (collision.gameObject.layer == enemyBulletLayer)
+    {
+        EnemyBulletScript bullet = collision.GetComponent<EnemyBulletScript>();
+        if (bullet != null)
+        {
+            damage = bullet.GetBulletDamage();
+        }
+    }
+    else if (collision.gameObject.layer == enemyMissileLayer)
+    {
+        EnemyMissileScript missile = collision.GetComponent<EnemyMissileScript>();
+        if (missile != null)
+        {
+            damage = missile.GetMissileDamage();
+        }
+    }
+    else if (collision.gameObject.layer == enemyLargeBulletLayer)
+    {
+        EnemyLargeBulletScript largeBullet = collision.GetComponent<EnemyLargeBulletScript>();
+        if (largeBullet != null)
+        {
+            damage = largeBullet.GetBulletDamage();
+        }
+    }
+
+    // Apply damage if valid
+    if (damage > 0)
+    {
+        TakeDamage(damage);
+        Destroy(collision.gameObject);
+        Debug.Log("Took damage from enemy projectile with damage: " + damage);
+    }
+}
+
 
     private IEnumerator GenerateResources()
     {
@@ -110,7 +170,6 @@ public class BaseScript : MonoBehaviour
         {
             resources -= upgradeCost;
             resourceGenerationRate += additionalRate;
-            Debug.Log("Resource generation rate upgraded! New rate: " + resourceGenerationRate + " per second.");
             TriggerResourceChanged();
         }
         else
@@ -125,12 +184,7 @@ public class BaseScript : MonoBehaviour
         {
             resources -= upgradeCost;
             healthRegenRate += additionalRegenRate;
-            Debug.Log("Health regeneration rate upgraded! New rate: " + healthRegenRate + " per second.");
             TriggerResourceChanged();
-        }
-        else
-        {
-            Debug.LogWarning("Not enough resources to upgrade health regeneration.");
         }
     }
 
@@ -141,13 +195,8 @@ public class BaseScript : MonoBehaviour
             resources -= upgradeCost;
             maxHealth += additionalCapacity;
             baseHealth = Mathf.Min(baseHealth, maxHealth); // Ensure current health doesn't exceed the new max
-            Debug.Log("Health capacity upgraded! New max health: " + maxHealth);
             TriggerResourceChanged();
             TriggerHealthChanged();
-        }
-        else
-        {
-            Debug.LogWarning("Not enough resources to upgrade health capacity.");
         }
     }
 
@@ -166,7 +215,6 @@ public class BaseScript : MonoBehaviour
                 spawnPosition.y = -3.4f;
                 Debug.Log($"{unitPrefabs[unitIndex].name} spawned. Cost: {unitCost} resources. Remaining: {resources}");
 
-                // Use Quaternion.identity to ensure units spawn with default rotation
                 Instantiate(unitPrefabs[unitIndex], spawnPosition, Quaternion.identity);
             }
             else
@@ -208,7 +256,6 @@ public class BaseScript : MonoBehaviour
         }
         else
         {
-            Debug.Log("Base health: " + baseHealth);
             TriggerHealthChanged(); // Trigger health update when damaged
         }
     }
@@ -216,19 +263,33 @@ public class BaseScript : MonoBehaviour
     private void BaseDestroyed()
     {
         Debug.Log("Base destroyed!");
+
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true); // Reveal the hidden panel
+        }
+        Destroy(gameObject);
     }
-    
 
     private void TriggerResourceChanged()
     {
-        // Invoke the event to notify listeners of the resource change
         OnResourceChanged?.Invoke();
         UpdateResourceText();
     }
 
     private void TriggerHealthChanged()
     {
-        // Invoke the event to notify listeners of the health change
         OnHealthChanged?.Invoke();
+    }
+
+    // Methods for Retry and Quit buttons
+    public void RetryGame()
+    {
+        SceneManager.LoadScene("GameScene"); // Replace "GameScene" with your actual game scene name
+    }
+
+    public void QuitGame()
+    {
+        SceneManager.LoadScene("MainMenu"); // Replace "MainMenu" with your actual main menu scene name
     }
 }

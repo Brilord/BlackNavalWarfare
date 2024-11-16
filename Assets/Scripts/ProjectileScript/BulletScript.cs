@@ -49,14 +49,12 @@ public class BulletScript : MonoBehaviour
         {
             // Apply damage to the enemy
             enemy.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyShip and dealt " + bulletDamage + " damage.");
         }
         EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
         if (enemyBase != null)
         {
             // Apply damage to the enemy base
             enemyBase.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyBase and dealt " + bulletDamage + " damage.");
         }
 
         // Check if the bullet hit an enemy gunboat
@@ -65,7 +63,6 @@ public class BulletScript : MonoBehaviour
         {
             // Apply damage to the enemy gunboat
             gunboat.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyGunboat and dealt " + bulletDamage + " damage.");
         }
 
         // Check if the bullet hit an enemy cruiser
@@ -74,7 +71,6 @@ public class BulletScript : MonoBehaviour
         {
             // Apply damage to the enemy cruiser
             cruiser.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyCruiser and dealt " + bulletDamage + " damage.");
         }
 
         // Check if the bullet hit an enemy anti-air ship
@@ -83,14 +79,12 @@ public class BulletScript : MonoBehaviour
         {
             // Apply damage to the enemy anti-air ship
             antiAirShip.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyAntiAirShip and dealt " + bulletDamage + " damage.");
         }
         EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
         if (battleShip != null)
         {
             // Apply damage to the battleship
             battleShip.TakeDamage(bulletDamage);
-            Debug.Log("Bullet hit an EnemyBattleShip and dealt " + bulletDamage + " damage.");
         }
 
         // Destroy the bullet instance after it hits something

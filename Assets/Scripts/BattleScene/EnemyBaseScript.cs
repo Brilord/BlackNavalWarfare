@@ -221,44 +221,81 @@ public class EnemyBaseScript : MonoBehaviour
         return true;
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Bullet"))
-        {
-            BulletScript bullet = collision.GetComponent<BulletScript>();
-            if (bullet != null)
-            {
-                int bulletDamage = bullet.GetBulletDamage();
-                TakeDamage(bulletDamage);
-                Destroy(collision.gameObject);
-                Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-            }
-        }
-        else if (collision.CompareTag("Missile"))
-        {
-            MissileScript missile = collision.GetComponent<MissileScript>();
-            if (missile != null)
-            {
-                int missileDamage = missile.GetMissileDamage();
-                TakeDamage(missileDamage);
-                Destroy(collision.gameObject);
-                Debug.Log("Took damage from Missile with damage: " + missileDamage);
-            }
-        }
-        else if (collision.CompareTag("LargeBullet"))
-        {
-            LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-            if (largeBullet != null)
-            {
-                int largeBulletDamage = largeBullet.GetBulletDamage();
-                TakeDamage(largeBulletDamage);
-                Destroy(collision.gameObject);
-                Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-            }
-        }
+    // void OnTriggerEnter2D(Collider2D collision)
+    // {
+    //     if (collision.CompareTag("Bullet"))
+    //     {
+    //         BulletScript bullet = collision.GetComponent<BulletScript>();
+    //         if (bullet != null)
+    //         {
+    //             int bulletDamage = bullet.GetBulletDamage();
+    //             TakeDamage(bulletDamage);
+    //             Destroy(collision.gameObject);
+    //             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
+    //         }
+    //     }
+    //     else if (collision.CompareTag("Missile"))
+    //     {
+    //         MissileScript missile = collision.GetComponent<MissileScript>();
+    //         if (missile != null)
+    //         {
+    //             int missileDamage = missile.GetMissileDamage();
+    //             TakeDamage(missileDamage);
+    //             Destroy(collision.gameObject);
+    //             Debug.Log("Took damage from Missile with damage: " + missileDamage);
+    //         }
+    //     }
+    //     else if (collision.CompareTag("LargeBullet"))
+    //     {
+    //         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+    //         if (largeBullet != null)
+    //         {
+    //             int largeBulletDamage = largeBullet.GetBulletDamage();
+    //             TakeDamage(largeBulletDamage);
+    //             Destroy(collision.gameObject);
+    //             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
+    //         }
+    //     }
         
-        // Destroy the projectile after collision
+    //     // Destroy the projectile after collision
+    // }
+    void OnTriggerEnter2D(Collider2D collision)
+{
+    int bulletLayer = LayerMask.NameToLayer("Bullet");
+    int missileLayer = LayerMask.NameToLayer("Missile");
+    int largeBulletLayer = LayerMask.NameToLayer("LargeBullet");
+
+    if (collision.gameObject.layer == bulletLayer)
+    {
+        BulletScript bullet = collision.GetComponent<BulletScript>();
+        if (bullet != null)
+        {
+            int bulletDamage = bullet.GetBulletDamage();
+            TakeDamage(bulletDamage);
+            Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
+        }
     }
+    else if (collision.gameObject.layer == missileLayer)
+    {
+        MissileScript missile = collision.GetComponent<MissileScript>();
+        if (missile != null)
+        {
+            int missileDamage = missile.GetMissileDamage();
+            TakeDamage(missileDamage);
+            Debug.Log("Took damage from Missile with damage: " + missileDamage);
+        }
+    }
+    else if (collision.gameObject.layer == largeBulletLayer)
+    {
+        LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+        if (largeBullet != null)
+        {
+            int largeBulletDamage = largeBullet.GetBulletDamage();
+            TakeDamage(largeBulletDamage);
+            Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
+        }
+    }
+}
 
     // New coroutine to spawn generic prefabs at intervals
     private IEnumerator SpawnPrefabsAtInterval()

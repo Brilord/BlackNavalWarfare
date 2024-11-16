@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5698751892915808988}
   - component: {fileID: -8327817544770862842}
   - component: {fileID: -1891305705579226873}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: LargeEnemyBullet
-  m_TagString: EnemyBullet
+  m_TagString: LargeEnemyBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,10 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b70d4ad81dee5ed40b6c594eb57976ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletDamage: 5
+  bulletDamage: 10
   bulletSpeed: 10
   maxRange: 20
-  spawnSound: {fileID: 8300000, guid: eb4bc50dac2af584bb37419998117b1b, type: 3}
+  spawnSound: {fileID: 8300000, guid: da01e981124d0584888fad1f015d925e, type: 3}
 --- !u!50 &-1891305705579226873
 Rigidbody2D:
   serializedVersion: 5

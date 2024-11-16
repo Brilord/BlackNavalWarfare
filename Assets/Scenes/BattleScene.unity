@@ -4858,8 +4858,11 @@ MonoBehaviour:
   resources: 100
   maxResourceCapacity: 800
   resourceGenerationRate: 20
+  gameOverPanel: {fileID: 752304008}
   healthRegenRate: 5
   resourceText: {fileID: 0}
+  retryButton: {fileID: 1370802535}
+  quitButton: {fileID: 1142385920}
 --- !u!50 &1998885934
 Rigidbody2D:
   serializedVersion: 5

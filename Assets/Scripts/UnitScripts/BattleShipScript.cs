@@ -9,7 +9,7 @@ public class BattleShipScript : MonoBehaviour
     public Transform gun2FirePoint;
     public Transform missileFirePoint;
 
-    public float gunFireRate = 0.5f;
+    public float gunFireRate = 0.5f; //
     public float missileFireRate = 5f;
     public float gunBulletSpeed = 15f;
     public float missileSpeed = 8f;
@@ -144,17 +144,74 @@ public class BattleShipScript : MonoBehaviour
         health -= damage;
     }
 
+    // void OnTriggerEnter2D(Collider2D collision)
+    // {
+    //     // Check if the collision is with an enemy bullet, missile, or large bullet
+    //     if (collision.CompareTag("EnemyBullet"))
+    //     {
+    //         int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
+    //         TakeDamage(bulletDamage);
+    //         Destroy(collision.gameObject);
+    //     }
+    //     if (collision.CompareTag("EnemyMissile"))
+    //     {
+    //         int missileDamage = collision.GetComponent<EnemyMissileScript>().GetMissileDamage();
+    //         TakeDamage(missileDamage);
+    //         Destroy(collision.gameObject);
+    //     }
+    //     if (collision.CompareTag("EnemyLargeBullet"))
+    //     {
+    //         int largeBulletDamage = collision.GetComponent<EnemyLargeBulletScript>().GetBulletDamage();
+    //         TakeDamage(largeBulletDamage);
+    //         Destroy(collision.gameObject);
+    //     }
+       
+    // }
+
     void OnTriggerEnter2D(Collider2D collision)
+{
+    // Define layer indices for different enemy projectiles
+    int enemyBulletLayer = LayerMask.NameToLayer("EnemyBullet");
+    int enemyMissileLayer = LayerMask.NameToLayer("EnemyMissile");
+    int enemyLargeBulletLayer = LayerMask.NameToLayer("EnemyLargeBullet");
+
+    int damage = 0;
+
+    // Check if the collision is with an enemy bullet, missile, or large bullet based on layers
+    if (collision.gameObject.layer == enemyBulletLayer)
     {
-        // Check if the collision is with an enemy bullet, missile, or large bullet
-        if (collision.CompareTag("EnemyBullet"))
+        EnemyBulletScript bullet = collision.GetComponent<EnemyBulletScript>();
+        if (bullet != null)
         {
-            int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
-            TakeDamage(bulletDamage);
-            Destroy(collision.gameObject);
+            damage = bullet.GetBulletDamage();
         }
-        
     }
+    else if (collision.gameObject.layer == enemyMissileLayer)
+    {
+        EnemyMissileScript missile = collision.GetComponent<EnemyMissileScript>();
+        if (missile != null)
+        {
+            damage = missile.GetMissileDamage();
+        }
+    }
+    else if (collision.gameObject.layer == enemyLargeBulletLayer)
+    {
+        EnemyLargeBulletScript largeBullet = collision.GetComponent<EnemyLargeBulletScript>();
+        if (largeBullet != null)
+        {
+            damage = largeBullet.GetBulletDamage();
+        }
+    }
+
+    // Apply damage if valid and destroy the object
+    if (damage > 0)
+    {
+        TakeDamage(damage);
+        Destroy(collision.gameObject);
+        Debug.Log("Took damage from enemy projectile with damage: " + damage);
+    }
+}
+
 
     void DetectEnemy()
     {

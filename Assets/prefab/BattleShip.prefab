@@ -108,7 +108,7 @@ MonoBehaviour:
   gun1FirePoint: {fileID: 6405879567170615516}
   gun2FirePoint: {fileID: 6405879567170615516}
   missileFirePoint: {fileID: 6405879567170615516}
-  gunFireRate: 2
+  gunFireRate: 0.5
   missileFireRate: 5
   gunBulletSpeed: 15
   missileSpeed: 8

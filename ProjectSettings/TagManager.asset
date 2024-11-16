@@ -11,6 +11,8 @@ TagManager:
   - LargeBullet
   - Missile
   - EnemyMissile
+  - EnemyLargeBullet
+  - LargeEnemyBullet
   layers:
   - Default
   - TransparentFX
@@ -24,10 +26,10 @@ TagManager:
   - FriendlyUnits
   - Bullet
   - EnemyBullet
-  - 
-  - 
-  - 
-  - 
+  - EnemyLargeBullet
+  - EnemyMissile
+  - LargeBullet
+  - Missile
   - 
   - 
   - 

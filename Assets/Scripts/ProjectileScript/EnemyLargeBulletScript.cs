@@ -51,6 +51,8 @@ public class EnemyLargeBulletScript : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         // Check if the bullet hit something that can take damage
+        Debug.Log("Collision detected with: " + collision.gameObject.name);
+
         PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
         if (player != null)
         {

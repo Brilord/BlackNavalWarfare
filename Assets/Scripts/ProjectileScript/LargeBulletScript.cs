@@ -50,8 +50,10 @@ public class LargeBulletScript : MonoBehaviour
     }
 
     void OnCollisionEnter2D(Collision2D collision)
+
     {
         // Check if the large bullet hit an enemy and apply damage
+        Debug.Log("Collision detected with: " + collision.gameObject.name);
         EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
         if (enemy != null)
         {

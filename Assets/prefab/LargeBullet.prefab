@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7767010148327626053}
   - component: {fileID: -5243878762334582918}
   - component: {fileID: 922919940126084863}
-  m_Layer: 10
+  m_Layer: 14
   m_Name: LargeBullet
   m_TagString: LargeBullet
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 4278143839499493249}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0042, y: -0.0079, z: 0}
+  m_LocalPosition: {x: -0.0042, y: -0.0079, z: -4}
   m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -151,7 +151,7 @@ MonoBehaviour:
   largeBulletDamage: 10
   bulletSpeed: 10
   maxRange: 20
-  spawnSound: {fileID: 8300000, guid: eb4bc50dac2af584bb37419998117b1b, type: 3}
+  spawnSound: {fileID: 8300000, guid: da01e981124d0584888fad1f015d925e, type: 3}
 --- !u!50 &922919940126084863
 Rigidbody2D:
   serializedVersion: 5

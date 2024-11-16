@@ -126,9 +126,48 @@ public class EnemyBattleShipScript : MonoBehaviour
         health -= damage;
     }
 
-     void OnTriggerEnter2D(Collider2D collision)
+//      void OnTriggerEnter2D(Collider2D collision)
+// {
+//     if (collision.CompareTag("Bullet"))
+//     {
+//         BulletScript bullet = collision.GetComponent<BulletScript>();
+//         if (bullet != null)
+//         {
+//             int bulletDamage = bullet.GetBulletDamage();
+//             TakeDamage(bulletDamage);
+//             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
+//         }
+//     }
+//     else if (collision.CompareTag("Missile"))
+//     {
+//         MissileScript missile = collision.GetComponent<MissileScript>();
+//         if (missile != null)
+//         {
+//             int missileDamage = missile.GetMissileDamage();
+//             TakeDamage(missileDamage);
+//             Debug.Log("Took damage from Missile with damage: " + missileDamage);
+//         }
+//     }
+//     else if (collision.CompareTag("LargeBullet"))
+//     {
+//         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+//         if (largeBullet != null)
+//         {
+//             int largeBulletDamage = largeBullet.GetBulletDamage();
+//             TakeDamage(largeBulletDamage);
+//             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
+//         }
+//     }
+    
+    
+// }
+void OnTriggerEnter2D(Collider2D collision)
 {
-    if (collision.CompareTag("Bullet"))
+    int bulletLayer = LayerMask.NameToLayer("Bullet");
+    int missileLayer = LayerMask.NameToLayer("Missile");
+    int largeBulletLayer = LayerMask.NameToLayer("LargeBullet");
+
+    if (collision.gameObject.layer == bulletLayer)
     {
         BulletScript bullet = collision.GetComponent<BulletScript>();
         if (bullet != null)
@@ -138,7 +177,7 @@ public class EnemyBattleShipScript : MonoBehaviour
             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
         }
     }
-    else if (collision.CompareTag("Missile"))
+    else if (collision.gameObject.layer == missileLayer)
     {
         MissileScript missile = collision.GetComponent<MissileScript>();
         if (missile != null)
@@ -148,7 +187,7 @@ public class EnemyBattleShipScript : MonoBehaviour
             Debug.Log("Took damage from Missile with damage: " + missileDamage);
         }
     }
-    else if (collision.CompareTag("LargeBullet"))
+    else if (collision.gameObject.layer == largeBulletLayer)
     {
         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
         if (largeBullet != null)
@@ -158,10 +197,8 @@ public class EnemyBattleShipScript : MonoBehaviour
             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
         }
     }
-    
-    // Destroy the projectile after collision
-    //Destroy(collision.gameObject);
 }
+
 
 
     void DetectPlayer()
