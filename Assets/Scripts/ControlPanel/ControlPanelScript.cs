@@ -22,6 +22,7 @@ public class ControlPanelScript : MonoBehaviour
     // Initial upgrade costs
     private int resourceStorageUpgradeCost = 50;
     private int resourceGenerationUpgradeCost = 30;
+    public TextMeshProUGUI statusText; // New status text field for feedback
 
      // Initial upgrade costs
     private int healthCapacityUpgradeCost = 60; // Initial cost for health capacity upgrade

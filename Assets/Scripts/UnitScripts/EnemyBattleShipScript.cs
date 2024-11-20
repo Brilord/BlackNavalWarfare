@@ -8,6 +8,7 @@ public class EnemyBattleShipScript : MonoBehaviour
     public Transform gun1FirePoint;
     public Transform gun2FirePoint;
     public Transform missileFirePoint;
+    public int cost = 400;                     // Cost of the enemy gunboat (if relevant for your game)
 
     public float gunFireRate = 0.5f;
     public float missileFireRate = 5f;
@@ -15,6 +16,7 @@ public class EnemyBattleShipScript : MonoBehaviour
     public float missileSpeed = 8f;
     private float gunFireTimer = 0f;
     private float missileFireTimer = 0f;
+    
 
     public float moveSpeed = 1f;
     private float currentSpeed;
@@ -126,41 +128,6 @@ public class EnemyBattleShipScript : MonoBehaviour
         health -= damage;
     }
 
-//      void OnTriggerEnter2D(Collider2D collision)
-// {
-//     if (collision.CompareTag("Bullet"))
-//     {
-//         BulletScript bullet = collision.GetComponent<BulletScript>();
-//         if (bullet != null)
-//         {
-//             int bulletDamage = bullet.GetBulletDamage();
-//             TakeDamage(bulletDamage);
-//             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-//         }
-//     }
-//     else if (collision.CompareTag("Missile"))
-//     {
-//         MissileScript missile = collision.GetComponent<MissileScript>();
-//         if (missile != null)
-//         {
-//             int missileDamage = missile.GetMissileDamage();
-//             TakeDamage(missileDamage);
-//             Debug.Log("Took damage from Missile with damage: " + missileDamage);
-//         }
-//     }
-//     else if (collision.CompareTag("LargeBullet"))
-//     {
-//         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-//         if (largeBullet != null)
-//         {
-//             int largeBulletDamage = largeBullet.GetBulletDamage();
-//             TakeDamage(largeBulletDamage);
-//             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-//         }
-//     }
-    
-    
-// }
 void OnTriggerEnter2D(Collider2D collision)
 {
     int bulletLayer = LayerMask.NameToLayer("Bullet");

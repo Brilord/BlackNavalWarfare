@@ -118,30 +118,6 @@ public class GunboatScript : MonoBehaviour
         }
     }
 
-    // void OnTriggerEnter2D(Collider2D collision)
-    // {
-    //     // Check if the collision is with an enemy bullet, missile, or large bullet
-    //     if (collision.CompareTag("EnemyBullet"))
-    //     {
-    //         int bulletDamage = collision.GetComponent<EnemyBulletScript>().GetBulletDamage();
-    //         TakeDamage(bulletDamage);
-    //         Destroy(collision.gameObject);
-    //     }
-    //     if (collision.CompareTag("EnemyMissile"))
-    //     {
-    //         int missileDamage = collision.GetComponent<EnemyMissileScript>().GetMissileDamage();
-    //         TakeDamage(missileDamage);
-    //         Destroy(collision.gameObject);
-    //     }
-    //     if (collision.CompareTag("EnemyLargeBullet"))
-    //     {
-    //         int largeBulletDamage = collision.GetComponent<EnemyLargeBulletScript>().GetBulletDamage();
-    //         TakeDamage(largeBulletDamage);
-    //         Destroy(collision.gameObject);
-    //     }
-       
-    // }
-
 void OnTriggerEnter2D(Collider2D collision)
 {
     // Define layer indices for different enemy projectiles

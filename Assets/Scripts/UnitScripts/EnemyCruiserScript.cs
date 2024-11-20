@@ -8,6 +8,7 @@ public class EnemyCruiserScript : MonoBehaviour
     public Transform firePoint;
     public float fireRate = 0.5f;
     private float fireTimer = 0f;
+        public int cost = 100;                     // Cost of the enemy gunboat (if relevant for your game)
 
     public float moveSpeed = 1.5f;
     private float currentSpeed;
@@ -137,42 +138,7 @@ public class EnemyCruiserScript : MonoBehaviour
     }
 
     
-//     void OnTriggerEnter2D(Collider2D collision)
-// {
-//     if (collision.CompareTag("Bullet"))
-//     {
-//         BulletScript bullet = collision.GetComponent<BulletScript>();
-//         if (bullet != null)
-//         {
-//             int bulletDamage = bullet.GetBulletDamage();
-//             TakeDamage(bulletDamage);
-//             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-//         }
-//     }
-//     else if (collision.CompareTag("Missile"))
-//     {
-//         MissileScript missile = collision.GetComponent<MissileScript>();
-//         if (missile != null)
-//         {
-//             int missileDamage = missile.GetMissileDamage();
-//             TakeDamage(missileDamage);
-//             Debug.Log("Took damage from Missile with damage: " + missileDamage);
-//         }
-//     }
-//     else if (collision.CompareTag("LargeBullet"))
-//     {
-//         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-//         if (largeBullet != null)
-//         {
-//             int largeBulletDamage = largeBullet.GetBulletDamage();
-//             TakeDamage(largeBulletDamage);
-//             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-//         }
-//     }
-    
-//     // Destroy the projectile after collision
-//     //Destroy(collision.gameObject);
-// }
+
 void OnTriggerEnter2D(Collider2D collision)
 {
     int bulletLayer = LayerMask.NameToLayer("Bullet");

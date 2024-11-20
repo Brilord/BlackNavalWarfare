@@ -10,6 +10,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
 
     public float moveSpeed = 2f;
     private float currentSpeed;
+    public int cost = 80;                     // Cost of the enemy gunboat (if relevant for your game)
 
     public float detectionRange = 7f; // Detection range for friendly units
     private GameObject targetFriendly = null;
@@ -137,8 +138,7 @@ public class EnemyAntiAirShipScript : MonoBehaviour
         }
     }
     
-    // Destroy the projectile after collision
-    //Destroy(collision.gameObject);
+
 }
 
 

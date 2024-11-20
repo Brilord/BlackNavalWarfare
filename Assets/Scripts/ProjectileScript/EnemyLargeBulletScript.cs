@@ -16,6 +16,7 @@ public class EnemyLargeBulletScript : MonoBehaviour
 
     private AudioSource audioSource;    // AudioSource component for playing the sound
     private Vector2 startPosition;      // The position where the large enemy bullet was instantiated
+    private bool hasCollided = false;   // Flag to prevent multiple collisions
 
     void Start()
     {
@@ -50,42 +51,37 @@ public class EnemyLargeBulletScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the bullet hit something that can take damage
+        // Check if the bullet has already collided with something
+        if (hasCollided) return;
+
+        // Mark as collided to prevent further interactions
+        hasCollided = true;
+
+        // Check if the bullet hit a target that can take damage
         Debug.Log("Collision detected with: " + collision.gameObject.name);
 
-        PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
-        if (player != null)
+        // Apply damage to the specific target the bullet collided with
+        if (collision.gameObject.TryGetComponent(out PlayerScript player))
         {
             player.TakeDamage(bulletDamage);
         }
-
-        // Apply damage to other friendly units
-        GunboatScript gunboat = collision.gameObject.GetComponent<GunboatScript>();
-        if (gunboat != null)
+        else if (collision.gameObject.TryGetComponent(out GunboatScript gunboat))
         {
             gunboat.TakeDamage(bulletDamage);
         }
-
-        BaseScript baseScript = collision.gameObject.GetComponent<BaseScript>();
-        if (baseScript != null)
+        else if (collision.gameObject.TryGetComponent(out BaseScript baseScript))
         {
             baseScript.TakeDamage(bulletDamage);
         }
-
-        CruiserScript cruiser = collision.gameObject.GetComponent<CruiserScript>();
-        if (cruiser != null)
+        else if (collision.gameObject.TryGetComponent(out CruiserScript cruiser))
         {
             cruiser.TakeDamage(bulletDamage);
         }
-
-        SmallAntiAirShip smallAntiAirShip = collision.gameObject.GetComponent<SmallAntiAirShip>();
-        if (smallAntiAirShip != null)
+        else if (collision.gameObject.TryGetComponent(out SmallAntiAirShip smallAntiAirShip))
         {
             smallAntiAirShip.TakeDamage(bulletDamage);
         }
-
-        BattleShipScript battleShip = collision.gameObject.GetComponent<BattleShipScript>();
-        if (battleShip != null)
+        else if (collision.gameObject.TryGetComponent(out BattleShipScript battleShip))
         {
             battleShip.TakeDamage(bulletDamage);
         }
@@ -99,6 +95,7 @@ public class EnemyLargeBulletScript : MonoBehaviour
     {
         return bulletDamage;
     }
+
     public float GetBulletSpeed()
     {
         return bulletSpeed;

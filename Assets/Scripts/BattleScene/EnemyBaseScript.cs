@@ -15,20 +15,24 @@ public class EnemyBaseScript : MonoBehaviour
 
     private BoxCollider2D baseCollider;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI statusText; // New status text field
     public GameObject destructionPopup;
     public GameObject retryButton;
     public GameObject quitButton;
-    public GameObject[] unitPrefabs; // Array of unit prefabs
-    public GameObject[] spawnablePrefabs; // Array of generic spawnable prefabs
+    public GameObject[] unitPrefabs;
+    public GameObject[] spawnablePrefabs;
     public float spawnInterval = 0.2f;
     public float resources = 100f;
 
     void Start()
     {
-        // Initialize UI elements, start coroutines, etc.
         if (healthText == null)
         {
             Debug.LogError("Health Text UI not assigned. Please assign it in the Inspector.");
+        }
+        if (statusText == null)
+        {
+            Debug.LogError("Status Text UI not assigned. Please assign it in the Inspector.");
         }
         if (destructionPopup == null)
         {
@@ -82,7 +86,6 @@ public class EnemyBaseScript : MonoBehaviour
 
     private int SelectRandomUnitToSpawn()
     {
-        // Get list of affordable units
         var affordableUnits = new System.Collections.Generic.List<int>();
         for (int i = 0; i < unitPrefabs.Length; i++)
         {
@@ -94,47 +97,69 @@ public class EnemyBaseScript : MonoBehaviour
 
         if (affordableUnits.Count > 0)
         {
-            // Select a random affordable unit
             return affordableUnits[Random.Range(0, affordableUnits.Count)];
         }
-        
-        return -1; // No units can be afforded
+
+        return -1;
     }
 
     private void SpawnSpecificUnit(int unitIndex)
+{
+    if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
     {
-        if (unitIndex >= 0 && unitIndex < unitPrefabs.Length)
+        GameObject unitPrefab = unitPrefabs[unitIndex];
+        int unitCost = GetUnitCost(unitPrefab);
+
+        // Debug statement to check the available resources before spawning
+        Debug.Log($"Attempting to spawn {unitPrefab.name}. Cost: {unitCost}, Available resources: {resources}");
+
+        if (CanAfford(unitCost))
         {
-            GameObject unitPrefab = unitPrefabs[unitIndex];
-            int unitCost = GetUnitCost(unitPrefab);
-            
-            if (CanAfford(unitCost))
-            {
-                resources -= unitCost;
-                TriggerResourceChanged();
+            resources -= unitCost; // Deduct resources
+            TriggerResourceChanged();
 
-                Vector3 spawnPosition = transform.position;
-                spawnPosition.y = -3.4f;
-                Debug.Log($"Spawning {unitPrefab.name} at {spawnPosition}. Cost: {unitCost} resources. Remaining: {resources}");
+            // Debug statement to confirm resource deduction
+            Debug.Log($"Spawned {unitPrefab.name}. Resources after deduction: {resources}");
 
-                Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
-            }
-            else
-            {
-                Debug.LogWarning($"Not enough resources to spawn {unitPrefab.name}. Required: {unitCost}, Available: {resources}");
-            }
+            Vector3 spawnPosition = transform.position;
+            spawnPosition.y = -3.4f;
+            UpdateStatusText($"Spawning {unitPrefab.name}. Cost: {unitCost} resources. Remaining: {resources}");
+
+            Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
         }
         else
         {
-            Debug.LogWarning("Invalid unit index selected. Check unitPrefabs array.");
+            // Debug statement if resources are insufficient
+            Debug.Log($"Insufficient resources to spawn {unitPrefab.name}. Required: {unitCost}, Available: {resources}");
+            UpdateStatusText($"Not enough resources to spawn {unitPrefab.name}. Required: {unitCost}, Available: {resources}");
         }
     }
+}
+
 
     private int GetUnitCost(GameObject unitPrefab)
+{
+    // Check for each possible script and retrieve the cost
+    if (unitPrefab.TryGetComponent(out EnemyGunboatScript gunboatScript))
     {
-        var unitScript = unitPrefab.GetComponent<EnemyGunboatScript>();
-        return unitScript != null ? unitScript.cost : 0;
+        return gunboatScript.cost;
     }
+    else if (unitPrefab.TryGetComponent(out EnemyAntiAirShipScript antiAirScript))
+    {
+        return antiAirScript.cost;
+    }
+    else if (unitPrefab.TryGetComponent(out EnemyBattleShipScript battleShipScript))
+    {
+        return battleShipScript.cost;
+    }
+    else if (unitPrefab.TryGetComponent(out EnemyCruiserScript cruiserScript))
+    {
+        return cruiserScript.cost;
+    }
+    
+    // Return 0 if no matching script is found
+    return 0;
+}
 
     private bool CanAfford(int cost)
     {
@@ -143,18 +168,20 @@ public class EnemyBaseScript : MonoBehaviour
 
     private void TriggerResourceChanged()
     {
-        Debug.Log("Resources updated: " + resources);
+        UpdateStatusText("Resources updated: " + resources);
     }
 
     private IEnumerator GenerateResources()
+{
+    while (baseHP > 0)
     {
-        while (baseHP > 0)
-        {
-            yield return new WaitForSeconds(1f);
-            resources += resourceGenerationRate;
-            TriggerResourceChanged();
-        }
+        yield return new WaitForSeconds(1f);
+        float adjustedResourceGeneration = resourceGenerationRate * Mathf.Sqrt(resources / 100); // Adjust based on current resources
+        resources += adjustedResourceGeneration;
+        TriggerResourceChanged();
     }
+}
+
 
     private IEnumerator UpgradeOverTime()
     {
@@ -164,8 +191,11 @@ public class EnemyBaseScript : MonoBehaviour
 
             healthRegenRate += 2f;
             resourceGenerationRate += 5f;
+            maxHP += 500f;
+            baseHP = Mathf.Min(baseHP + 500f, maxHP);
 
-            Debug.Log("Base upgraded! New Health Regen Rate: " + healthRegenRate + ", New Resource Generation Rate: " + resourceGenerationRate);
+            UpdateHealthText();
+            UpdateStatusText($"Base upgraded! Max HP: {maxHP}, Regen Rate: {healthRegenRate}, Resource Rate: {resourceGenerationRate}");
         }
     }
 
@@ -178,6 +208,7 @@ public class EnemyBaseScript : MonoBehaviour
     {
         baseHP -= damageAmount;
         UpdateHealthText();
+        UpdateStatusText($"Took {damageAmount} damage. Current HP: {baseHP}/{maxHP}");
 
         if (baseHP <= 0)
         {
@@ -192,13 +223,13 @@ public class EnemyBaseScript : MonoBehaviour
             yield return new WaitForSeconds(regenInterval);
             baseHP = Mathf.Min(baseHP + healthRegenRate, maxHP);
             UpdateHealthText();
-            Debug.Log("Health regenerated. Current HP: " + baseHP);
+            UpdateStatusText($"Health regenerated. Current HP: {baseHP}");
         }
     }
 
     private void DestroyBase()
     {
-        Debug.Log("Base destroyed! Final HP: " + baseHP + "/" + maxHP);
+        UpdateStatusText("Base destroyed!");
 
         if (destructionPopup != null)
         {
@@ -216,107 +247,76 @@ public class EnemyBaseScript : MonoBehaviour
         }
     }
 
-    public bool IsEnemy()
+    private void UpdateStatusText(string message)
     {
-        return true;
+        if (statusText != null)
+        {
+            statusText.text = message;
+        }
     }
 
-    // void OnTriggerEnter2D(Collider2D collision)
-    // {
-    //     if (collision.CompareTag("Bullet"))
-    //     {
-    //         BulletScript bullet = collision.GetComponent<BulletScript>();
-    //         if (bullet != null)
-    //         {
-    //             int bulletDamage = bullet.GetBulletDamage();
-    //             TakeDamage(bulletDamage);
-    //             Destroy(collision.gameObject);
-    //             Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-    //         }
-    //     }
-    //     else if (collision.CompareTag("Missile"))
-    //     {
-    //         MissileScript missile = collision.GetComponent<MissileScript>();
-    //         if (missile != null)
-    //         {
-    //             int missileDamage = missile.GetMissileDamage();
-    //             TakeDamage(missileDamage);
-    //             Destroy(collision.gameObject);
-    //             Debug.Log("Took damage from Missile with damage: " + missileDamage);
-    //         }
-    //     }
-    //     else if (collision.CompareTag("LargeBullet"))
-    //     {
-    //         LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-    //         if (largeBullet != null)
-    //         {
-    //             int largeBulletDamage = largeBullet.GetBulletDamage();
-    //             TakeDamage(largeBulletDamage);
-    //             Destroy(collision.gameObject);
-    //             Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-    //         }
-    //     }
-        
-    //     // Destroy the projectile after collision
-    // }
     void OnTriggerEnter2D(Collider2D collision)
-{
-    int bulletLayer = LayerMask.NameToLayer("Bullet");
-    int missileLayer = LayerMask.NameToLayer("Missile");
-    int largeBulletLayer = LayerMask.NameToLayer("LargeBullet");
+    {
+        int bulletLayer = LayerMask.NameToLayer("Bullet");
+        int missileLayer = LayerMask.NameToLayer("Missile");
+        int largeBulletLayer = LayerMask.NameToLayer("LargeBullet");
 
-    if (collision.gameObject.layer == bulletLayer)
-    {
-        BulletScript bullet = collision.GetComponent<BulletScript>();
-        if (bullet != null)
+        if (collision.gameObject.layer == bulletLayer)
         {
-            int bulletDamage = bullet.GetBulletDamage();
-            TakeDamage(bulletDamage);
-            Debug.Log("Took damage from Bullet with damage: " + bulletDamage);
-        }
-    }
-    else if (collision.gameObject.layer == missileLayer)
-    {
-        MissileScript missile = collision.GetComponent<MissileScript>();
-        if (missile != null)
-        {
-            int missileDamage = missile.GetMissileDamage();
-            TakeDamage(missileDamage);
-            Debug.Log("Took damage from Missile with damage: " + missileDamage);
-        }
-    }
-    else if (collision.gameObject.layer == largeBulletLayer)
-    {
-        LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
-        if (largeBullet != null)
-        {
-            int largeBulletDamage = largeBullet.GetBulletDamage();
-            TakeDamage(largeBulletDamage);
-            Debug.Log("Took damage from LargeBullet with damage: " + largeBulletDamage);
-        }
-    }
-}
-
-    // New coroutine to spawn generic prefabs at intervals
-    private IEnumerator SpawnPrefabsAtInterval()
-    {
-        while (baseHP > 0)
-        {
-            yield return new WaitForSeconds(spawnInterval);
-            foreach (var prefab in spawnablePrefabs)
+            BulletScript bullet = collision.GetComponent<BulletScript>();
+            if (bullet != null)
             {
-                SpawnPrefab(prefab);
+                int bulletDamage = bullet.GetBulletDamage();
+                TakeDamage(bulletDamage);
+                UpdateStatusText($"Took damage from Bullet with damage: {bulletDamage}");
+            }
+        }
+        else if (collision.gameObject.layer == missileLayer)
+        {
+            MissileScript missile = collision.GetComponent<MissileScript>();
+            if (missile != null)
+            {
+                int missileDamage = missile.GetMissileDamage();
+                TakeDamage(missileDamage);
+                UpdateStatusText($"Took damage from Missile with damage: {missileDamage}");
+            }
+        }
+        else if (collision.gameObject.layer == largeBulletLayer)
+        {
+            LargeBulletScript largeBullet = collision.GetComponent<LargeBulletScript>();
+            if (largeBullet != null)
+            {
+                int largeBulletDamage = largeBullet.GetBulletDamage();
+                TakeDamage(largeBulletDamage);
+                UpdateStatusText($"Took damage from Large Bullet with damage: {largeBulletDamage}");
             }
         }
     }
 
-    private void SpawnPrefab(GameObject prefab)
+    private IEnumerator SpawnPrefabsAtInterval()
 {
-    Vector3 spawnPosition = transform.position;
-    spawnPosition.y = -3.4f; // Fixed Y position at -3.4f
+    while (baseHP > 0)
+    {
+        float healthPercentage = baseHP / maxHP;
+        float adjustedSpawnInterval = Mathf.Lerp(0.3f, spawnInterval, Mathf.Pow(healthPercentage, 1.5f));
 
-    Instantiate(prefab, spawnPosition, Quaternion.identity);
-    Debug.Log($"Spawned {prefab.name} at {spawnPosition}");
+        yield return new WaitForSeconds(adjustedSpawnInterval);
+
+        if (spawnablePrefabs.Length > 0)
+        {
+            int randomIndex = Random.Range(0, spawnablePrefabs.Length);
+            SpawnPrefab(spawnablePrefabs[randomIndex]);
+        }
+    }
 }
 
+
+    private void SpawnPrefab(GameObject prefab)
+    {
+        Vector3 spawnPosition = transform.position;
+        spawnPosition.y = -3.4f;
+
+        Instantiate(prefab, spawnPosition, Quaternion.identity);
+        UpdateStatusText($"Spawned {prefab.name}");
+    }
 }
