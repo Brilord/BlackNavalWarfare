@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 1204584933693026209, guid: 279b2b7db74689b45bc8489f7e8fed0a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 10.36, y: 1.86}
@@ -181,6 +181,7 @@ MonoBehaviour:
   gun1FirePoint: {fileID: 2125419852103927024}
   gun2FirePoint: {fileID: 2125419852103927024}
   missileFirePoint: {fileID: 2125419852103927024}
+  cost: 400
   gunFireRate: 0.5
   missileFireRate: 5
   gunBulletSpeed: 15

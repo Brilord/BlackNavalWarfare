@@ -41,55 +41,83 @@ public class BulletScript : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+void OnCollisionEnter2D(Collision2D collision)
+{
+    // Check if the bullet hit an enemy ship
+    EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
+    if (enemy != null)
     {
-        // Check if the bullet hit an enemy ship
-        EnemyScript enemy = collision.gameObject.GetComponent<EnemyScript>();
-        if (enemy != null)
-        {
-            // Apply damage to the enemy
-            enemy.TakeDamage(bulletDamage);
-        }
-        EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
-        if (enemyBase != null)
-        {
-            // Apply damage to the enemy base
-            enemyBase.TakeDamage(bulletDamage);
-        }
+        // Apply damage to the enemy
+        enemy.TakeDamage(bulletDamage);
 
-        // Check if the bullet hit an enemy gunboat
-        EnemyGunboatScript gunboat = collision.gameObject.GetComponent<EnemyGunboatScript>();
-        if (gunboat != null)
-        {
-            // Apply damage to the enemy gunboat
-            gunboat.TakeDamage(bulletDamage);
-        }
-
-        // Check if the bullet hit an enemy cruiser
-        EnemyCruiserScript cruiser = collision.gameObject.GetComponent<EnemyCruiserScript>();
-        if (cruiser != null)
-        {
-            // Apply damage to the enemy cruiser
-            cruiser.TakeDamage(bulletDamage);
-        }
-
-        // Check if the bullet hit an enemy anti-air ship
-        EnemyAntiAirShipScript antiAirShip = collision.gameObject.GetComponent<EnemyAntiAirShipScript>();
-        if (antiAirShip != null)
-        {
-            // Apply damage to the enemy anti-air ship
-            antiAirShip.TakeDamage(bulletDamage);
-        }
-        EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
-        if (battleShip != null)
-        {
-            // Apply damage to the battleship
-            battleShip.TakeDamage(bulletDamage);
-        }
-
-        // Destroy the bullet instance after it hits something
+        // Destroy the bullet after dealing damage
         Destroy(gameObject);
+        return;
     }
+
+    // Check if the bullet hit an enemy base
+    EnemyBaseScript enemyBase = collision.gameObject.GetComponent<EnemyBaseScript>();
+    if (enemyBase != null)
+    {
+        // Apply damage to the enemy base
+        enemyBase.TakeDamage(bulletDamage);
+
+        // Destroy the bullet after dealing damage
+        Destroy(gameObject);
+        return;
+    }
+
+    // Check if the bullet hit an enemy gunboat
+    EnemyGunboatScript gunboat = collision.gameObject.GetComponent<EnemyGunboatScript>();
+    if (gunboat != null)
+    {
+        // Apply damage to the enemy gunboat
+        gunboat.TakeDamage(bulletDamage);
+
+        // Destroy the bullet after dealing damage
+        Destroy(gameObject);
+        return;
+    }
+
+    // Check if the bullet hit an enemy cruiser
+    EnemyCruiserScript cruiser = collision.gameObject.GetComponent<EnemyCruiserScript>();
+    if (cruiser != null)
+    {
+        // Apply damage to the enemy cruiser
+        cruiser.TakeDamage(bulletDamage);
+
+        // Destroy the bullet after dealing damage
+        Destroy(gameObject);
+        return;
+    }
+
+    // Check if the bullet hit an enemy anti-air ship
+    EnemyAntiAirShipScript antiAirShip = collision.gameObject.GetComponent<EnemyAntiAirShipScript>();
+    if (antiAirShip != null)
+    {
+        // Apply damage to the enemy anti-air ship
+        antiAirShip.TakeDamage(bulletDamage);
+
+        // Destroy the bullet after dealing damage
+        Destroy(gameObject);
+        return;
+    }
+
+    // Check if the bullet hit an enemy battleship
+    EnemyBattleShipScript battleShip = collision.gameObject.GetComponent<EnemyBattleShipScript>();
+    if (battleShip != null)
+    {
+        // Apply damage to the battleship
+        battleShip.TakeDamage(bulletDamage);
+
+        // Destroy the bullet after dealing damage
+        Destroy(gameObject);
+        return;
+    }
+
+    
+}
+
 
     // Public method to get the bullet's damage value
     public int GetBulletDamage()

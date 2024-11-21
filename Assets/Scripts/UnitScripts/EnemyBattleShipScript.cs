@@ -77,10 +77,24 @@ public class EnemyBattleShipScript : MonoBehaviour
     }
 
     void Move(float speed)
+{
+    // Always move to the left
+    Vector2 movement = Vector2.left * speed * Time.deltaTime;
+    transform.Translate(movement);
+
+    // Update rotation to face the direction of movement
+    if (movement.x > 0)
     {
-        // Always move to the left
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        // Face right
+        transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
     }
+    else if (movement.x < 0)
+    {
+        // Face left
+        transform.localScale = new Vector3(Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
+    }
+}
+
 
     void Flip()
     {

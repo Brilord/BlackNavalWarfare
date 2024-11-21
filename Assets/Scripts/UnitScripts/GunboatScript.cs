@@ -22,13 +22,34 @@ public class GunboatScript : MonoBehaviour
     public Text healthText;
 
     void Start()
-    {
-        originalScale = transform.localScale;
-        currentSpeed = moveSpeed;
+{
+    originalScale = transform.localScale;
+    currentSpeed = moveSpeed;
 
-        // Initialize health text
-        UpdateHealthText();
+
+    // Adjust the BoxCollider2D size with slight random fluctuation
+    BoxCollider2D collider = GetComponent<BoxCollider2D>();
+    if (collider != null)
+    {
+        // Store the original size
+        Vector2 originalSize = collider.size;
+
+        // Add a small random fluctuation to the size
+        float randomXAdjustment = Random.Range(-1f, 1f); // ±0.01 range
+        float randomYAdjustment = Random.Range(-1f, 1f); // ±0.01 range
+        collider.size = new Vector2(
+            originalSize.x + randomXAdjustment,
+            originalSize.y + randomYAdjustment
+        );
+
+        Debug.Log($"Collider size adjusted: X {collider.size.x}, Y {collider.size.y}");
     }
+    else
+    {
+        Debug.LogWarning("No BoxCollider2D attached to the object!");
+    }
+}
+
 
     void Update()
     {

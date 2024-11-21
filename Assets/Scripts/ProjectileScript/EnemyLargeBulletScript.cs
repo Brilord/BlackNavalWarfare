@@ -1,36 +1,36 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyLargeBulletScript : MonoBehaviour
 {
     [SerializeField]
-    private int bulletDamage = 10;       // Increased damage dealt by the large enemy bullet
+    private int bulletDamage = 10;
 
     [SerializeField]
-    private float bulletSpeed = 10f;    // Speed at which the large enemy bullet travels
+    private float bulletSpeed = 10f;
 
     [SerializeField]
-    private float maxRange = 20f;       // Maximum range of the large enemy bullet
+    private float maxRange = 20f;
 
     [SerializeField]
-    private AudioClip spawnSound;       // Sound effect for when the bullet is spawned
+    private AudioClip spawnSound;
 
-    private AudioSource audioSource;    // AudioSource component for playing the sound
-    private Vector2 startPosition;      // The position where the large enemy bullet was instantiated
-    private bool hasCollided = false;   // Flag to prevent multiple collisions
+    private AudioSource audioSource;
+    private Vector2 startPosition;
+
+    // To track objects that have already been hit
+    private HashSet<GameObject> hitObjects = new HashSet<GameObject>();
 
     void Start()
     {
-        // Store the initial position of the bullet
         startPosition = transform.position;
 
-        // Get or add an AudioSource component to play the spawn sound
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
 
-        // Set the audio clip to the spawn sound and play it
         audioSource.clip = spawnSound;
         audioSource.playOnAwake = false;
         audioSource.Play();
@@ -38,10 +38,8 @@ public class EnemyLargeBulletScript : MonoBehaviour
 
     void Update()
     {
-        // Move the bullet backward based on its speed and direction
         transform.Translate(Vector2.left * bulletSpeed * Time.deltaTime);
 
-        // Check if the bullet has exceeded its maximum range
         float distanceTraveled = Vector2.Distance(startPosition, transform.position);
         if (distanceTraveled >= maxRange)
         {
@@ -51,46 +49,61 @@ public class EnemyLargeBulletScript : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Check if the bullet has already collided with something
-        if (hasCollided) return;
+        if (hitObjects.Contains(collision.gameObject)) return; // Skip if already hit
 
-        // Mark as collided to prevent further interactions
-        hasCollided = true;
+        hitObjects.Add(collision.gameObject); // Add to the hit tracker
 
-        // Check if the bullet hit a target that can take damage
-        Debug.Log("Collision detected with: " + collision.gameObject.name);
-
-        // Apply damage to the specific target the bullet collided with
-        if (collision.gameObject.TryGetComponent(out PlayerScript player))
+        PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
+        if (player != null)
         {
             player.TakeDamage(bulletDamage);
-        }
-        else if (collision.gameObject.TryGetComponent(out GunboatScript gunboat))
-        {
-            gunboat.TakeDamage(bulletDamage);
-        }
-        else if (collision.gameObject.TryGetComponent(out BaseScript baseScript))
-        {
-            baseScript.TakeDamage(bulletDamage);
-        }
-        else if (collision.gameObject.TryGetComponent(out CruiserScript cruiser))
-        {
-            cruiser.TakeDamage(bulletDamage);
-        }
-        else if (collision.gameObject.TryGetComponent(out SmallAntiAirShip smallAntiAirShip))
-        {
-            smallAntiAirShip.TakeDamage(bulletDamage);
-        }
-        else if (collision.gameObject.TryGetComponent(out BattleShipScript battleShip))
-        {
-            battleShip.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
         }
 
-        // Destroy the bullet instance after it hits something
+        GunboatScript playerGunboat = collision.gameObject.GetComponent<GunboatScript>();
+        if (playerGunboat != null)
+        {
+            playerGunboat.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
+        }
+
+        BaseScript playerBase = collision.gameObject.GetComponent<BaseScript>();
+        if (playerBase != null)
+        {
+            playerBase.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
+        }
+
+        CruiserScript playerCruiser = collision.gameObject.GetComponent<CruiserScript>();
+        if (playerCruiser != null)
+        {
+            playerCruiser.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
+        }
+
+        SmallAntiAirShip playerAntiAirShip = collision.gameObject.GetComponent<SmallAntiAirShip>();
+        if (playerAntiAirShip != null)
+        {
+            playerAntiAirShip.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
+        }
+
+        BattleShipScript playerBattleShip = collision.gameObject.GetComponent<BattleShipScript>();
+        if (playerBattleShip != null)
+        {
+            playerBattleShip.TakeDamage(bulletDamage);
+            Destroy(gameObject);
+            return;
+        }
+
         Destroy(gameObject);
     }
 
-    // Public method to get the bullet's damage value
     public int GetBulletDamage()
     {
         return bulletDamage;
